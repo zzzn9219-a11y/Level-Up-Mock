@@ -16,7 +16,7 @@ namespace Level_Up_Mock
         {
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Select Profile";
-            this.Size = new Size(700, 570);
+            this.Size = new Size(700, 700);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(10, 14, 26);    // Deep Navy
             this.ForeColor = Color.White;
