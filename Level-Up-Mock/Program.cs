@@ -2,16 +2,15 @@ namespace Level_Up_Mock
 {
     internal static class Program
     {
-        /// <summary>
-        ///  The main entry point for the application.
-        /// </summary>
+        // Application entry point. Bootstraps the WinForms runtime and opens the splash screen.
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
+            // Initialise DPI awareness and visual styles before any form is created.
             ApplicationConfiguration.Initialize();
-            Application.Run(new Form1());
+
+            // Start on the splash screen, which initialises the database before navigating on.
+            Application.Run(new frmSplash());
         }
     }
 }
