@@ -4,7 +4,7 @@ namespace Level_Up_Mock
 {
     // Models a row in the Subject table. Each subject belongs to one user.
     // Handles all SQL for reading, saving, and updating subject records.
-    internal class Subject
+    public class Subject
     {
         // ── Private fields ────────────────────────────────────────────────────────────
 

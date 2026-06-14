@@ -4,7 +4,7 @@ namespace Level_Up_Mock
 {
     // Models a row in the Session table. Contains the XP calculation logic.
     // Every completed study session produces one Session object, which is then saved here.
-    internal class Session
+    public class Session
     {
         // ── Private fields ────────────────────────────────────────────────────────────
 

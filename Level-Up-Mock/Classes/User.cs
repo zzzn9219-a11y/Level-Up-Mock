@@ -4,7 +4,7 @@ namespace Level_Up_Mock
 {
     // Models a row in the User table. Handles all SQL for creating, reading, and updating user profiles.
     // Forms call these methods only — no SQL ever appears in a form.
-    internal class User
+    public class User
     {
         // ── Constants ─────────────────────────────────────────────────────────────────
 

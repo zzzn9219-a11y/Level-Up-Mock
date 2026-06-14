@@ -5,7 +5,7 @@ namespace Level_Up_Mock
     // Singleton database manager. Owns the single shared SQLiteConnection for the whole application.
     // All data model classes get the connection via DatabaseManager.Instance.GetConnection().
     // No form ever accesses the database directly.
-    internal class DatabaseManager
+    public class DatabaseManager
     {
         // ── Singleton infrastructure ──────────────────────────────────────────────────
 
