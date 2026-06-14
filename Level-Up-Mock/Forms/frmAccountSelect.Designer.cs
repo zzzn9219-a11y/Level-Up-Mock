@@ -16,7 +16,7 @@ namespace Level_Up_Mock
         {
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Select Profile";
-            this.Size = new Size(700, 540);
+            this.Size = new Size(700, 570);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(10, 14, 26);    // Deep Navy
             this.ForeColor = Color.White;
@@ -69,7 +69,7 @@ namespace Level_Up_Mock
                 BackColor = Color.FromArgb(67, 97, 238),    // Electric Blue
                 FlatStyle = FlatStyle.Flat,
                 Size = new Size(180, 44),
-                Location = new Point(260, 468)
+                Location = new Point(260, 484)
             };
             btnNewProfile.FlatAppearance.BorderSize = 0;
             btnNewProfile.Click += btnNewProfile_Click;

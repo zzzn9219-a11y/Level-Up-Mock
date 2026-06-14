@@ -53,7 +53,7 @@ namespace Level_Up_Mock
             var pnlProfile = new Panel
             {
                 Location = new Point(20, 54),
-                Size = new Size(848, 160),
+                Size = new Size(848, 190),
                 BackColor = Color.FromArgb(20, 24, 40)
             };
 
@@ -94,13 +94,13 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
-            // Level label.
+            // Level label — moved down so it doesn't crowd the username (20pt text).
             lblLevel = new Label
             {
                 Text = "Level 1",
                 Font = new Font("Segoe UI", 14f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(67, 97, 238),
-                Location = new Point(130, 72),
+                Location = new Point(130, 92),
                 AutoSize = true
             };
 
@@ -110,7 +110,7 @@ namespace Level_Up_Mock
                 Text = "⚡ 0 XP",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(255, 215, 0),
-                Location = new Point(300, 72),
+                Location = new Point(310, 95),
                 AutoSize = true
             };
 
@@ -120,14 +120,14 @@ namespace Level_Up_Mock
                 Text = "★ 0 Rewards",
                 Font = new Font("Segoe UI", 11f),
                 ForeColor = Color.FromArgb(123, 47, 190),
-                Location = new Point(420, 72),
+                Location = new Point(460, 95),
                 AutoSize = true
             };
 
             // XP bar background track.
             var pnlXPBarTrack = new Panel
             {
-                Location = new Point(130, 105),
+                Location = new Point(130, 132),
                 Size = new Size(580, 14),
                 BackColor = Color.FromArgb(40, 46, 70)
             };
@@ -147,7 +147,7 @@ namespace Level_Up_Mock
                 Text = "0 / 100 XP",
                 Font = new Font("Segoe UI", 9f),
                 ForeColor = Color.FromArgb(160, 168, 192),
-                Location = new Point(720, 102),
+                Location = new Point(720, 130),
                 AutoSize = true
             };
 
@@ -163,13 +163,13 @@ namespace Level_Up_Mock
                 Text = "YOUR SUBJECTS",
                 Font = new Font("Segoe UI", 9f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(160, 168, 192),
-                Location = new Point(20, 228),
+                Location = new Point(20, 260),
                 AutoSize = true
             };
 
             pnlSubjectChips = new Panel
             {
-                Location = new Point(20, 250),
+                Location = new Point(20, 282),
                 Size = new Size(848, 34),
                 BackColor = Color.Transparent
             };
@@ -180,27 +180,27 @@ namespace Level_Up_Mock
                 Text = "NAVIGATE",
                 Font = new Font("Segoe UI", 9f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(160, 168, 192),
-                Location = new Point(20, 300),
+                Location = new Point(20, 330),
                 AutoSize = true
             };
 
             // ── Navigation buttons grid ───────────────────────────────────────────────
             // Single large "Study Timer" button — the primary action for Version 1.
-            btnTimer = MakeNavButton("⏱  Study Timer", 20, 326, Color.FromArgb(67, 97, 238));
+            btnTimer = MakeNavButton("⏱  Study Timer", 20, 356, Color.FromArgb(67, 97, 238));
             btnTimer.Click += btnTimer_Click;
 
             // Placeholder buttons for features coming in later versions.
-            var btnStore = MakeNavButton("🛒  Store", 200, 326, Color.FromArgb(20, 24, 40));
+            var btnStore = MakeNavButton("🛒  Store", 200, 356, Color.FromArgb(20, 24, 40));
             btnStore.Enabled = false;
-            var btnTracker = MakeNavButton("📊  Tracker", 380, 326, Color.FromArgb(20, 24, 40));
+            var btnTracker = MakeNavButton("📊  Tracker", 380, 356, Color.FromArgb(20, 24, 40));
             btnTracker.Enabled = false;
-            var btnLeaderboard = MakeNavButton("🏆  Leaderboard", 560, 326, Color.FromArgb(20, 24, 40));
+            var btnLeaderboard = MakeNavButton("🏆  Leaderboard", 560, 356, Color.FromArgb(20, 24, 40));
             btnLeaderboard.Enabled = false;
-            var btnDeadlines = MakeNavButton("📅  Deadlines", 20, 426, Color.FromArgb(20, 24, 40));
+            var btnDeadlines = MakeNavButton("📅  Deadlines", 20, 456, Color.FromArgb(20, 24, 40));
             btnDeadlines.Enabled = false;
-            var btnChallenge = MakeNavButton("🎯  Challenge", 200, 426, Color.FromArgb(20, 24, 40));
+            var btnChallenge = MakeNavButton("🎯  Challenge", 200, 456, Color.FromArgb(20, 24, 40));
             btnChallenge.Enabled = false;
-            var btnSettings = MakeNavButton("⚙  Settings", 380, 426, Color.FromArgb(20, 24, 40));
+            var btnSettings = MakeNavButton("⚙  Settings", 380, 456, Color.FromArgb(20, 24, 40));
             btnSettings.Enabled = false;
 
             // ── Assemble form ─────────────────────────────────────────────────────────
