@@ -70,7 +70,7 @@ namespace Level_Up_Mock
         //        add FLOOR(base * 0.5) bonus XP.
         public int CalculateXP()
         {
-            int baseXP = _durationMinutes * 2;
+            int baseXP = _durationMinutes;
 
             // > 60, not >= 60: a 60-minute session earns exactly 60 XP, no bonus.
             if (_durationMinutes > 60)

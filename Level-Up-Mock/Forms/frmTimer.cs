@@ -90,7 +90,7 @@ namespace Level_Up_Mock
             else
             {
                 // Resume: add elapsed paused time to the running total, restart the tick.
-                _totalPausedMs += (long)(DateTime.Now - _pausedAt).TotalMilliseconds;
+                _totalPausedMs += (long)(_pausedAt - DateTime.Now).TotalMilliseconds;
                 _isPaused = false;
                 btnPause.Text = "Pause";
                 tmrDisplay.Start();
