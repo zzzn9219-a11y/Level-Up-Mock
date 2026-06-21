@@ -137,13 +137,9 @@ namespace Level_Up_Mock
             var control = sender as Control;
             if (control == null) return;
 
-            // Walk up to the card panel to get its Tag (in case a label was clicked).
-            var card = control is Panel ? control : control.Parent;
-            if (card?.Tag is int userID)
-            {
-                AppSession.CurrentUserID = userID;
-                OpenHome();
-            }
+            int userID = (int)control.Tag!;
+            AppSession.CurrentUserID = userID;
+            OpenHome();
         }
 
         // Shows an "add your first profile" prompt when the profile list is empty.

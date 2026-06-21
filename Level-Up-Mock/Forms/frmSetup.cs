@@ -55,6 +55,7 @@ namespace Level_Up_Mock
             if (!ValidateStage2()) return;
 
             btnSave.Enabled = false;
+            btnSave.Text = "Saving…";
 
             // Capture all UI values on the UI thread before handing off to the background thread.
             // WinForms controls must never be accessed from a non-UI thread.
@@ -75,11 +76,8 @@ namespace Level_Up_Mock
                     : string.Empty;
             }
 
-            bool success = await Task.Run(() =>
-            {
-                btnSave.Text = "Saving…";
-                return SaveProfile(name, username, dob, gender, year, subjectNames, subjectBoards);
-            });
+            bool success = await Task.Run(() => SaveProfile(
+                name, username, dob, gender, year, subjectNames, subjectBoards));
 
             if (!success) return;
 
