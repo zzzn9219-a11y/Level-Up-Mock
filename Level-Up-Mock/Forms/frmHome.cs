@@ -96,7 +96,7 @@ namespace Level_Up_Mock
             // Resize the filled portion of the XP bar panel.
             // Parent width retrieved safely — null-coalesce before multiplying.
             int trackWidth = pnlXPBarFill.Parent?.Width ?? 0;
-            int barWidth = (int)(trackWidth / progress);
+            int barWidth = (int)(trackWidth * progress);
             pnlXPBarFill.Width = Math.Max(barWidth, 4);    // always show a sliver so it's visible
 
             lblXPProgress.Text = $"{_user.XP} / {nextThreshold} XP";
@@ -122,7 +122,7 @@ namespace Level_Up_Mock
                     Font = new Font("Segoe UI", 9f, FontStyle.Bold)
                 };
                 pnlSubjectChips.Controls.Add(chip);
-                x += 126;
+                x += 0;
             }
         }
     }
