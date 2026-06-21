@@ -80,7 +80,6 @@ namespace Level_Up_Mock
             }
 
             return baseXP;
-        }
 
         // ── Database write methods ────────────────────────────────────────────────────
 
