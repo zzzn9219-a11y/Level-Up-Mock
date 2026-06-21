@@ -289,7 +289,7 @@ namespace Level_Up_Mock
         }
 
         // Returns all user profiles, sorted by TotalStudyMinutes descending (leaderboard order).
-        public static List<User> GetAllProfiles()
+        public static User GetAllProfiles()
         {
             var profiles = new List<User>();
             try
