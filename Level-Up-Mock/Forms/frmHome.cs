@@ -122,7 +122,7 @@ namespace Level_Up_Mock
                     Font = new Font("Segoe UI", 9f, FontStyle.Bold)
                 };
                 pnlSubjectChips.Controls.Add(chip);
-                x += 0;
+                x += 126;
             }
         }
     }
