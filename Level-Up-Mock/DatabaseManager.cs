@@ -56,12 +56,13 @@ namespace Level_Up_Mock
             try
             {
                 _connection = new SqliteConnection(_connectionString);
-                _connection.Open();
 
                 // SQLite disables foreign key enforcement by default; enable it now.
                 using var pragma = _connection.CreateCommand();
                 pragma.CommandText = "PRAGMA foreign_keys = ON;";
                 pragma.ExecuteNonQuery();
+
+                _connection.Open();
 
                 // Create all 8 tables (safe to run on every startup; IF NOT EXISTS guards data).
                 CreateTables();
