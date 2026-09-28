@@ -14,4 +14,9 @@
     <PackageReference Include="Microsoft.Data.Sqlite" Version="8.0.0" />
   </ItemGroup>
 
+  <ItemGroup>
+    <!-- Avatar and store item artwork. Copied next to the .exe so AvatarRenderer can find it. -->
+    <None Include="Assets\**\*.png" CopyToOutputDirectory="PreserveNewest" />
+  </ItemGroup>
+
 </Project>
