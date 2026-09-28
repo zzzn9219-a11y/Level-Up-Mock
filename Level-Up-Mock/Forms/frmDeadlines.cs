@@ -139,9 +139,9 @@ namespace Level_Up_Mock
             foreach (var deadline in _deadlines)
             {
                 var row = BuildDeadlineRow(deadline);
-                row.Location = new Point(0, y);
+                row.Location = new Point(0, y + pnlList.AutoScrollPosition.Y);
                 pnlList.Controls.Add(row);
-                y += row.Height + 8;
+                y += row.Height + Ui.S(this, 8);
             }
             pnlList.ResumeLayout();
         }
@@ -156,14 +156,14 @@ namespace Level_Up_Mock
 
             var row = new Panel
             {
-                Size = new Size(pnlList.Width - 24, 76),
+                Size = new Size(pnlList.ClientSize.Width - SystemInformation.VerticalScrollBarWidth, Ui.S(this, 76)),
                 BackColor = ROW_COLOUR
             };
 
             var bar = new Panel
             {
-                Location = new Point(0, 0),
-                Size = new Size(6, 76),
+                Location = Ui.P(this, 0, 0),
+                Size = Ui.S(this, 6, 76),
                 BackColor = accent
             };
 
@@ -172,8 +172,8 @@ namespace Level_Up_Mock
                 Text = deadline.DeadlineName,
                 Font = new Font("Segoe UI", 12f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(20, 10),
-                Size = new Size(300, 26),
+                Location = Ui.P(this, 20, 10),
+                Size = Ui.S(this, 300, 26),
                 AutoEllipsis = true
             };
 
@@ -183,7 +183,7 @@ namespace Level_Up_Mock
                        (subject != null ? $"  ·  {subject.SubjectName}" : "  ·  No subject"),
                 Font = new Font("Segoe UI", 9.5f),
                 ForeColor = GREY,
-                Location = new Point(20, 42),
+                Location = Ui.P(this, 20, 42),
                 AutoSize = true
             };
 
@@ -192,33 +192,32 @@ namespace Level_Up_Mock
                 Text = deadline.GetCountdownString(),
                 Font = new Font("Consolas", 13f, FontStyle.Bold),
                 ForeColor = accent,
-                Location = new Point(330, 24),
+                Location = Ui.P(this, 330, 24),
                 AutoSize = true
             };
             _countdownLabels[deadline] = lblCountdown;
 
-            var btnEdit = MakeRowButton("Edit", row.Width - 186, Color.FromArgb(40, 46, 70));
+            var btnEdit = MakeRowButton("Edit", row.Width - Ui.S(this, 186), Color.FromArgb(40, 46, 70));
             btnEdit.Click += (s, e) => EditDeadline(deadline);
 
-            var btnDone = MakeRowButton("✓ Done", row.Width - 96, Color.FromArgb(46, 160, 100));
+            var btnDone = MakeRowButton("✓ Done", row.Width - Ui.S(this, 96), Color.FromArgb(46, 160, 100));
             btnDone.Click += (s, e) => CompleteDeadline(deadline);
 
             row.Controls.AddRange(new Control[] { bar, lblName, lblDate, lblCountdown, btnEdit, btnDone });
             return row;
         }
 
-        private static Button MakeRowButton(string text, int x, Color backColour)
+        private Button MakeRowButton(string text, int x, Color backColour)
         {
             var btn = new Button
             {
                 Text = text,
                 Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
                 ForeColor = Color.White,
-                BackColor = backColour,
-                FlatStyle = FlatStyle.Flat,
-                Size = new Size(82, 34),
-                Location = new Point(x, 21)
+                Size = Ui.S(this, 82, 34),
+                Location = new Point(x, Ui.S(this, 21))
             };
+            Ui.StyleFlatButton(btn, backColour, ControlPaint.Light(backColour, 0.2f));
             btn.FlatAppearance.BorderSize = 0;
             return btn;
         }

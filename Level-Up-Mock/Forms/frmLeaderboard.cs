@@ -56,7 +56,7 @@ namespace Level_Up_Mock
                 var row = BuildRow(i + 1, _allProfiles[i]);
                 row.Location = new Point(0, y);
                 pnlRows.Controls.Add(row);
-                y += row.Height + 6;
+                y += row.Height + Ui.S(this, 6);
             }
 
             // With fewer than three profiles, gently suggest adding friends. It sits below
@@ -68,8 +68,8 @@ namespace Level_Up_Mock
                     Text = "Add more profiles to compete with friends!",
                     Font = new Font("Segoe UI", 11f, FontStyle.Italic),
                     ForeColor = GREY,
-                    Location = new Point(0, y + 14),
-                    Size = new Size(pnlRows.Width - 24, 30),
+                    Location = new Point(0, y + Ui.S(this, 14)),
+                    Size = new Size(pnlRows.ClientSize.Width - SystemInformation.VerticalScrollBarWidth, Ui.S(this, 30)),
                     TextAlign = ContentAlignment.MiddleCenter
                 });
             }
@@ -84,7 +84,7 @@ namespace Level_Up_Mock
 
             var row = new Panel
             {
-                Size = new Size(pnlRows.Width - 24, 56),
+                Size = new Size(pnlRows.ClientSize.Width - SystemInformation.VerticalScrollBarWidth, Ui.S(this, 56)),
                 BackColor = isCurrentUser ? HIGHLIGHT : ROW_COLOUR
             };
 
@@ -93,8 +93,8 @@ namespace Level_Up_Mock
                 Text = GetRankText(rank),
                 Font = new Font("Segoe UI Emoji", 15f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(12, 10),
-                Size = new Size(70, 36),
+                Location = Ui.P(this, 12, 10),
+                Size = Ui.S(this, 70, 36),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
@@ -104,8 +104,8 @@ namespace Level_Up_Mock
                 Text = isCurrentUser ? $"▶  ⚡ {profile.Username}  ◀" : profile.Username,
                 Font = new Font("Segoe UI", 12f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(96, 15),
-                Size = new Size(330, 28),
+                Location = Ui.P(this, 96, 15),
+                Size = Ui.S(this, 330, 28),
                 AutoEllipsis = true
             };
 
@@ -114,8 +114,8 @@ namespace Level_Up_Mock
                 Text = FormatStudyTime(profile.TotalStudyMinutes),
                 Font = new Font("Segoe UI", 12f, FontStyle.Bold),
                 ForeColor = isCurrentUser ? Color.White : Color.FromArgb(255, 215, 0),
-                Location = new Point(440, 15),
-                Size = new Size(130, 28)
+                Location = Ui.P(this, 440, 15),
+                Size = Ui.S(this, 130, 28)
             };
 
             var lblLevel = new Label
@@ -123,8 +123,8 @@ namespace Level_Up_Mock
                 Text = $"Lv {profile.Level}",
                 Font = new Font("Segoe UI", 11f),
                 ForeColor = isCurrentUser ? Color.White : GREY,
-                Location = new Point(590, 16),
-                Size = new Size(100, 26)
+                Location = Ui.P(this, 590, 16),
+                Size = Ui.S(this, 100, 26)
             };
 
             row.Controls.AddRange(new Control[] { lblRank, lblName, lblTime, lblLevel });

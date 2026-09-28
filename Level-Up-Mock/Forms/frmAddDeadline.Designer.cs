@@ -14,6 +14,11 @@ namespace Level_Up_Mock
         // Builds and positions the three inputs. Save / Cancel come from frmDataEntry.
         private void InitializeComponent()
         {
+            // Lay out at 96 DPI and let WinForms scale everything up on high-DPI screens.
+            this.SuspendLayout();
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Add Deadline";
             this.ClientSize = new Size(480, 400);
@@ -77,6 +82,9 @@ namespace Level_Up_Mock
                 lblDate, dtpDeadlineDate, lblDateError,
                 lblSubject, cmbSubject
             });
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         private static Label MakeFieldLabel(string text, int x, int y)

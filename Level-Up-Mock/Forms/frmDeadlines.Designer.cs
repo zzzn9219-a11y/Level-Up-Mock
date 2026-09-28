@@ -14,11 +14,16 @@ namespace Level_Up_Mock
         // Builds and positions all controls for the deadline list.
         private void InitializeComponent()
         {
+            // Lay out at 96 DPI and let WinForms scale everything up on high-DPI screens.
+            this.SuspendLayout();
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+
             components = new System.ComponentModel.Container();
 
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Deadlines";
-            this.Size = new Size(820, 620);
+            this.ClientSize = new Size(812, 570);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(10, 14, 26);
             this.ForeColor = Color.White;
@@ -66,7 +71,7 @@ namespace Level_Up_Mock
             pnlList = new Panel
             {
                 Location = new Point(26, 122),
-                Size = new Size(760, 440),
+                Size = new Size(760, 424),
                 AutoScroll = true,
                 BackColor = Color.Transparent
             };
@@ -76,6 +81,9 @@ namespace Level_Up_Mock
             tmrListCountdown.Tick += tmrListCountdown_Tick;
 
             this.Controls.AddRange(new Control[] { lblTitle, btnBack, btnAddDeadline, pnlList });
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         // ── Control declarations ──────────────────────────────────────────────────────

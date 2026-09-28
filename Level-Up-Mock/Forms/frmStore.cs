@@ -19,7 +19,8 @@ namespace Level_Up_Mock
 
         // Colours shared by the item cards and the detail panel.
         private static readonly Color CARD_COLOUR = Color.FromArgb(20, 24, 40);
-        private static readonly Color CARD_SELECTED = Color.FromArgb(34, 42, 72);
+        private static readonly Color CARD_SELECTED = Color.FromArgb(38, 48, 88);
+        private static readonly Color CARD_HOVER = Color.FromArgb(28, 34, 58);
         private static readonly Color BLUE = Color.FromArgb(67, 97, 238);
         private static readonly Color GREEN = Color.FromArgb(46, 196, 110);
         private static readonly Color GREY = Color.FromArgb(160, 168, 192);
@@ -158,6 +159,7 @@ namespace Level_Up_Mock
             foreach (var t in _tabCategories.Keys)
             {
                 t.BackColor = t == tab ? BLUE : CARD_COLOUR;
+                t.FlatAppearance.MouseOverBackColor = t == tab ? BLUE : CARD_HOVER;
                 t.ForeColor = t == tab ? Color.White : GREY;
             }
             _selectedCategory = _tabCategories[tab];
@@ -165,15 +167,18 @@ namespace Level_Up_Mock
         }
 
         // Rebuilds the 4-column grid of item cards for the selected category.
+        // Cards are built at runtime, so every size is scaled for the screen DPI.
         private void RenderItemGrid()
         {
             pnlItemGrid.SuspendLayout();
             ClearItemGrid();
 
             const int columns = 4;
-            const int cardWidth = 196;
-            const int cardHeight = 204;
-            const int gap = 10;
+            int gap = Ui.S(this, 10);
+            // Leave room for the vertical scrollbar so four cards always fit across.
+            int available = pnlItemGrid.ClientSize.Width - SystemInformation.VerticalScrollBarWidth;
+            int cardWidth = (available - gap * (columns - 1)) / columns;
+            int cardHeight = Ui.S(this, 186);
 
             var items = _allItems
                 .Where(i => _selectedCategory == "All" || i.Category == _selectedCategory)
@@ -182,7 +187,10 @@ namespace Level_Up_Mock
             for (int i = 0; i < items.Count; i++)
             {
                 var card = BuildItemCard(items[i], cardWidth, cardHeight);
-                card.Location = new Point((i % columns) * (cardWidth + gap), (i / columns) * (cardHeight + gap));
+                // AutoScrollPosition keeps cards in place if the grid is already scrolled.
+                card.Location = new Point(
+                    (i % columns) * (cardWidth + gap) + pnlItemGrid.AutoScrollPosition.X,
+                    (i / columns) * (cardHeight + gap) + pnlItemGrid.AutoScrollPosition.Y);
                 pnlItemGrid.Controls.Add(card);
             }
 
@@ -204,9 +212,11 @@ namespace Level_Up_Mock
         }
 
         // Creates one item card in one of three visual states: available, owned, or cannot afford.
+        // Layout: avatar preview, a status badge in the corner, the item name and its price.
         private Panel BuildItemCard(StoreItem item, int width, int height)
         {
             bool owned = _inventory.Any(i => i.ItemID == item.ItemID);
+            bool equipped = owned && _equipped.TryGetValue(item.Category, out var id) && id == item.ItemID;
             bool affordable = _user.XP >= item.XPCost;
 
             var card = new Panel
@@ -217,8 +227,10 @@ namespace Level_Up_Mock
                 Tag = item
             };
 
-            // Preview shows the item on the user's own avatar. Unaffordable items are faded.
-            Bitmap preview = AvatarRenderer.RenderWithItem(_equipped, item, new Size(110, 132));
+            // Preview shows the item on the user's own avatar. Unaffordable items are faded,
+            // which says "not yet" rather than hiding the item completely.
+            var previewSize = Ui.S(this, 96, 116);
+            Bitmap preview = AvatarRenderer.RenderWithItem(_equipped, item, previewSize);
             if (!owned && !affordable)
             {
                 Bitmap faded = AvatarRenderer.CreateFadedCopy(preview);
@@ -229,8 +241,8 @@ namespace Level_Up_Mock
             var pic = new PictureBox
             {
                 Image = preview,
-                Size = new Size(110, 132),
-                Location = new Point((width - 110) / 2, 8),
+                Size = previewSize,
+                Location = new Point((width - previewSize.Width) / 2, Ui.S(this, 8)),
                 SizeMode = PictureBoxSizeMode.Zoom,
                 BackColor = Color.Transparent
             };
@@ -240,42 +252,66 @@ namespace Level_Up_Mock
                 Text = item.DisplayName,
                 Font = new Font("Segoe UI", 10f, FontStyle.Bold),
                 ForeColor = owned || affordable ? Color.White : GREY,
-                Location = new Point(0, 146),
-                Size = new Size(width, 22),
-                TextAlign = ContentAlignment.MiddleCenter
+                Location = new Point(Ui.S(this, 6), Ui.S(this, 128)),
+                Size = new Size(width - Ui.S(this, 12), Ui.S(this, 24)),
+                TextAlign = ContentAlignment.MiddleCenter,
+                AutoEllipsis = true
             };
 
-            var lblState = new Label
+            // Owned items show their state; everything else shows the price.
+            var lblPrice = new Label
             {
-                Font = new Font("Segoe UI", 9f, FontStyle.Bold),
-                Location = new Point(0, 172),
-                Size = new Size(width, 22),
+                Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
+                Location = new Point(Ui.S(this, 6), Ui.S(this, 154)),
+                Size = new Size(width - Ui.S(this, 12), Ui.S(this, 22)),
                 TextAlign = ContentAlignment.MiddleCenter
             };
 
             if (owned)
             {
-                bool equipped = _equipped.TryGetValue(item.Category, out var id) && id == item.ItemID;
-                lblState.Text = equipped ? "OWNED ✓  ·  EQUIPPED" : "OWNED ✓";
-                lblState.ForeColor = GREEN;
-            }
-            else if (affordable)
-            {
-                lblState.Text = $"⚡ {item.XPCost} XP  ·  Buy";
-                lblState.ForeColor = BLUE;
+                lblPrice.Text = equipped ? "✓ Equipped" : "✓ Owned";
+                lblPrice.ForeColor = GREEN;
             }
             else
             {
-                lblState.Text = $"⚡ {item.XPCost} XP  ·  Not enough XP";
-                lblState.ForeColor = GREY;
+                lblPrice.Text = $"⚡ {item.XPCost} XP";
+                lblPrice.ForeColor = affordable ? Color.FromArgb(255, 215, 0) : GREY;
             }
 
-            card.Controls.AddRange(new Control[] { pic, lblName, lblState });
+            card.Controls.AddRange(new Control[] { pic, lblName, lblPrice });
 
-            // The whole card surface is clickable.
+            // Small corner badge: OWNED / EQUIPPED in green, or a lock hint when unaffordable.
+            string? badgeText = equipped ? "EQUIPPED" : owned ? "OWNED" : !affordable ? "NEED XP" : null;
+            if (badgeText != null)
+            {
+                var badge = new Label
+                {
+                    Text = badgeText,
+                    Font = new Font("Segoe UI", 7.5f, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    BackColor = owned ? GREEN : Color.FromArgb(70, 76, 100),
+                    AutoSize = true,
+                    Padding = new Padding(Ui.S(this, 4), Ui.S(this, 1), Ui.S(this, 4), Ui.S(this, 1))
+                };
+                badge.Location = new Point(width - badge.PreferredWidth - Ui.S(this, 6), Ui.S(this, 6));
+                card.Controls.Add(badge);
+                badge.BringToFront();
+            }
+
+            // The whole card surface is clickable, with a hover highlight.
             card.Click += ItemCard_Click;
+            card.MouseEnter += (s, e) => { if (card.Tag != _selectedItem) card.BackColor = CARD_HOVER; };
+            card.MouseLeave += (s, e) =>
+            {
+                // Ignore leave events caused by moving onto a child control of the card.
+                if (card.ClientRectangle.Contains(card.PointToClient(Cursor.Position))) return;
+                if (card.Tag != _selectedItem) card.BackColor = CARD_COLOUR;
+            };
             foreach (Control ctrl in card.Controls)
+            {
                 ctrl.Click += ItemCard_Click;
+                ctrl.Cursor = Cursors.Hand;
+            }
 
             return card;
         }
@@ -303,9 +339,7 @@ namespace Level_Up_Mock
                 lblDetailName.Text = "Your Hunter";
                 lblDetailDescription.Text = "Click an item above to preview it on your avatar.";
                 lblDetailPrice.Text = string.Empty;
-                btnPurchase.Text = "Confirm Buy";
-                btnPurchase.Enabled = false;
-                btnPurchase.BackColor = CARD_COLOUR;
+                SetPurchaseButton("Confirm Buy", false, CARD_COLOUR);
                 return;
             }
 
@@ -319,23 +353,26 @@ namespace Level_Up_Mock
 
             if (owned && equipped)
             {
-                btnPurchase.Text = "Equipped ✓";
-                btnPurchase.Enabled = false;
-                btnPurchase.BackColor = CARD_COLOUR;
+                SetPurchaseButton("Equipped ✓", false, CARD_COLOUR);
             }
             else if (owned)
             {
-                btnPurchase.Text = "Equip";
-                btnPurchase.Enabled = true;
-                btnPurchase.BackColor = GREEN;
+                SetPurchaseButton("Equip", true, GREEN);
             }
             else
             {
                 // Left enabled even when unaffordable, so the user gets a clear message on click.
-                btnPurchase.Text = "Confirm Buy";
-                btnPurchase.Enabled = true;
-                btnPurchase.BackColor = BLUE;
+                SetPurchaseButton("Confirm Buy", true, BLUE);
             }
+        }
+
+        // Sets the detail panel button's text, state and colour, with a matching hover colour.
+        private void SetPurchaseButton(string text, bool enabled, Color colour)
+        {
+            btnPurchase.Text = text;
+            btnPurchase.Enabled = enabled;
+            btnPurchase.BackColor = colour;
+            btnPurchase.FlatAppearance.MouseOverBackColor = enabled ? ControlPaint.Light(colour, 0.2f) : colour;
         }
 
         private void ShowMessage(string message, Color colour)

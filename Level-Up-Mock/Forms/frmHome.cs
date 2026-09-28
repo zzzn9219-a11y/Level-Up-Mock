@@ -106,7 +106,8 @@ namespace Level_Up_Mock
             // An unrecognised exam board returns an empty string instead of crashing.
             if (string.IsNullOrEmpty(url))
             {
-                ShowPastPaperError("No past paper link available for this subject/exam board combination.");
+                MessageBox.Show("No past paper link available for this subject/exam board combination.",
+                    "Past Papers", MessageBoxButtons.OK, MessageBoxIcon.Information);
                 return;
             }
 
@@ -118,7 +119,8 @@ namespace Level_Up_Mock
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"frmHome past paper open error: {ex.Message}");
-                ShowPastPaperError("Could not open your web browser.");
+                MessageBox.Show("Could not open your web browser.", "Past Papers",
+                    MessageBoxButtons.OK, MessageBoxIcon.Error);
             }
         }
 
@@ -200,6 +202,7 @@ namespace Level_Up_Mock
         }
 
         // Displays small coloured chips showing the user's subjects.
+        // Chips are built at runtime, so their sizes are scaled for the screen DPI here.
         private void UpdateSubjectChips()
         {
             pnlSubjectChips.Controls.Clear();
@@ -211,15 +214,17 @@ namespace Level_Up_Mock
                 {
                     Text = subject.SubjectName,
                     AutoSize = false,
-                    Size = new Size(120, 28),
-                    Location = new Point(x, 0),
                     TextAlign = ContentAlignment.MiddleCenter,
                     BackColor = subject.GetColour(),
                     ForeColor = Color.White,
                     Font = new Font("Segoe UI", 9f, FontStyle.Bold)
                 };
+                // Wide enough for the subject name plus padding, never narrower than 110px.
+                int width = Math.Max(Ui.S(this, 110), chip.PreferredWidth + Ui.S(this, 24));
+                chip.Size = new Size(width, pnlSubjectChips.Height);
+                chip.Location = new Point(x, 0);
                 pnlSubjectChips.Controls.Add(chip);
-                x += 126;
+                x += width + Ui.S(this, 8);
             }
         }
 

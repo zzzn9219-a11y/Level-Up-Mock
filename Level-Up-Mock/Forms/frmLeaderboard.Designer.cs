@@ -14,9 +14,14 @@ namespace Level_Up_Mock
         // Builds and positions all controls for the leaderboard.
         private void InitializeComponent()
         {
+            // Lay out at 96 DPI and let WinForms scale everything up on high-DPI screens.
+            this.SuspendLayout();
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Leaderboard";
-            this.Size = new Size(780, 600);
+            this.ClientSize = new Size(772, 566);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(10, 14, 26);
             this.ForeColor = Color.White;
@@ -75,6 +80,9 @@ namespace Level_Up_Mock
                 lblHeadRank, lblHeadName, lblHeadTime, lblHeadLevel,
                 pnlRows
             });
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         private static Label MakeHeading(string text, int x)

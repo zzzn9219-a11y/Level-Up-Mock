@@ -70,7 +70,7 @@ namespace Level_Up_Mock
                 var card = BuildProfileCard(user);
                 card.Location = new Point(0, cardY);
                 pnlCards.Controls.Add(card);
-                cardY += card.Height + 10;
+                cardY += card.Height + Ui.S(pnlCards, 10);
             }
         }
 
@@ -80,7 +80,7 @@ namespace Level_Up_Mock
             // Card container: dark navy background, rounded feel.
             var card = new Panel
             {
-                Size = new Size(pnlCards.Width - 20, 80),
+                Size = new Size(pnlCards.Width - Ui.S(pnlCards, 20), Ui.S(pnlCards, 80)),
                 BackColor = Color.FromArgb(20, 24, 40),    // Dark Navy
                 Cursor = Cursors.Hand,
                 Tag = user.UserID                           // store ID for the click handler
@@ -92,7 +92,7 @@ namespace Level_Up_Mock
                 Text = user.Username,
                 Font = new Font("Segoe UI", 14f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(16, 12),
+                Location = Ui.P(pnlCards, 16, 12),
                 AutoSize = true
             };
 
@@ -102,7 +102,7 @@ namespace Level_Up_Mock
                 Text = $"Level {user.Level}  ·  {FormatStudyHours(user.TotalStudyMinutes)}",
                 Font = new Font("Segoe UI", 10f, FontStyle.Regular),
                 ForeColor = Color.FromArgb(160, 168, 192),  // Light Grey
-                Location = new Point(16, 44),
+                Location = Ui.P(pnlCards, 16, 44),
                 AutoSize = true
             };
 
@@ -114,7 +114,7 @@ namespace Level_Up_Mock
                 ForeColor = Color.FromArgb(255, 215, 0),   // Gold
                 AutoSize = true
             };
-            lblXP.Location = new Point(card.Width - lblXP.PreferredWidth - 16, 28);
+            lblXP.Location = new Point(card.Width - lblXP.PreferredWidth - Ui.S(pnlCards, 16), Ui.S(pnlCards, 28));
 
             card.Controls.AddRange(new Control[] { lblUsername, lblInfo, lblXP });
 
