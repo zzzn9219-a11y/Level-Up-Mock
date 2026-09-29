@@ -53,7 +53,7 @@ namespace Level_Up_Mock
             int y = 0;
             for (int i = 0; i < _allProfiles.Count; i++)
             {
-                var row = BuildRow(i, _allProfiles[i]);
+                var row = BuildRow(i + 1, _allProfiles[i]);
                 row.Location = new Point(0, y);
                 pnlRows.Controls.Add(row);
                 y += row.Height + Ui.S(this, 6);

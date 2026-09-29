@@ -16,8 +16,6 @@ namespace Level_Up_Mock
         {
             // Lay out at 96 DPI and let WinForms scale everything up on high-DPI screens.
             this.SuspendLayout();
-            this.AutoScaleDimensions = new SizeF(96F, 96F);
-            this.AutoScaleMode = AutoScaleMode.Dpi;
 
             var navy = Color.FromArgb(20, 24, 40);
             var grey = Color.FromArgb(160, 168, 192);
