@@ -55,7 +55,7 @@ namespace Level_Up_Mock
         // midnight at the start of today, which has already gone.
         public static bool IsValidDeadlineDate(DateTime date)
         {
-            return date.Date > DateTime.Today;
+            return date.Date >= DateTime.Today;
         }
 
         // ── Countdown logic (Algorithm 6.1) ───────────────────────────────────────────
