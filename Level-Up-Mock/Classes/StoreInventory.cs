@@ -75,7 +75,7 @@ namespace Level_Up_Mock
             }
 
             // Check 2: affordability. >= so a user with exactly enough XP can buy the item.
-            if (user.XP < item.XPCost)
+            if (user.XP <= item.XPCost)
             {
                 return PurchaseResult.NotEnoughXP;
             }
