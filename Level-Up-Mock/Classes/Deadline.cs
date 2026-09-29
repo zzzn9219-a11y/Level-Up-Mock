@@ -10,7 +10,7 @@ namespace Level_Up_Mock
 
         private int _deadlineID;
         private int _userID;
-        private int _subjectID;
+        private int? _subjectID;
         private string _deadlineName;
         private DateTime _deadlineDate;
         private bool _isCompleted;
