@@ -75,7 +75,7 @@ namespace Level_Up_Mock
             }
 
             // Check 2: affordability. >= so a user with exactly enough XP can buy the item.
-            if (user.XP <= item.XPCost)
+            if (user.XP < item.XPCost)
             {
                 return PurchaseResult.NotEnoughXP;
             }
@@ -147,7 +147,7 @@ namespace Level_Up_Mock
             if (item == null) return false;
 
             // Must run before the equip so the new item is the only one left equipped.
-            if (!UnequipCategory(user.UserID, item.Category)) return false;
+            // if (!UnequipCategory(user.UserID, item.Category)) return false;
 
             try
             {
