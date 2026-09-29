@@ -80,7 +80,7 @@ namespace Level_Up_Mock
             if (remaining.TotalSeconds <= 0) return "OVERDUE";
 
             if (remaining.TotalDays >= 1)
-                return $"{(int)remaining.TotalDays}d {(int)remaining.TotalHours}h {remaining.Minutes}m {remaining.Seconds}s";
+                return $"{(int)remaining.TotalDays}d {remaining.Hours}h {remaining.Minutes}m {remaining.Seconds}s";
 
             if (remaining.TotalHours >= 1)
                 return $"{remaining.Hours}h {remaining.Minutes}m {remaining.Seconds}s";
@@ -215,7 +215,7 @@ namespace Level_Up_Mock
 
             // Nullable column: a deadline with no subject has NULL here.
             int sidOrd = reader.GetOrdinal("SubjectID");
-            d._subjectID = reader.IsDBNull(sidOrd) ? null : reader.GetInt32(sidOrd);
+            d._subjectID = reader.GetInt32(sidOrd);
 
             return d;
         }
