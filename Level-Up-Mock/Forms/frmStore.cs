@@ -216,7 +216,7 @@ namespace Level_Up_Mock
         private Panel BuildItemCard(StoreItem item, int width, int height)
         {
             bool owned = _inventory.Any(i => i.ItemID == item.ItemID);
-            bool equipped = _equipped[item.Category] == item.ItemID;
+            bool equipped = owned && _equipped.TryGetValue(item.Category, out var id) && id == item.ItemID;
             bool affordable = _user.XP >= item.XPCost;
 
             var card = new Panel
