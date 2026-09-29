@@ -42,17 +42,17 @@ namespace Level_Up_Mock
             // Layer 1 — background.
             DrawLayer(g, bounds, avatar, StoreItem.CATEGORY_BACKGROUND, DrawBackgroundFallback);
 
-            // Layer 2 — body. Not a store item, so it has its own asset path.
-            if (!TryDrawImage(g, bounds, Path.Combine("Assets", "Avatars", "Body", "body_default.png")))
-            {
-                DrawScaled(g, bounds, DrawBodyFallback);
-            }
-
             // Layer 3 — hair. With nothing equipped, the basic short hair from Version 1 is shown.
             if (avatar.ContainsKey(StoreItem.CATEGORY_HAIR))
                 DrawLayer(g, bounds, avatar, StoreItem.CATEGORY_HAIR, DrawHairFallback);
             else
                 DrawScaled(g, bounds, cg => DrawDefaultHair(cg));
+
+            // Layer 2 — body. Not a store item, so it has its own asset path.
+            if (!TryDrawImage(g, bounds, Path.Combine("Assets", "Avatars", "Body", "body_default.png")))
+            {
+                DrawScaled(g, bounds, DrawBodyFallback);
+            }
 
             // Layer 4 — accessory (drawn last so it sits on top of the hair).
             DrawLayer(g, bounds, avatar, StoreItem.CATEGORY_ACCESSORY, DrawAccessoryFallback);
