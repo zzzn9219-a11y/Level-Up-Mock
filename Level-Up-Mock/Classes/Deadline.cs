@@ -215,7 +215,7 @@ namespace Level_Up_Mock
 
             // Nullable column: a deadline with no subject has NULL here.
             int sidOrd = reader.GetOrdinal("SubjectID");
-            d._subjectID = reader.GetInt32(sidOrd);
+            d._subjectID = reader.IsDBNull(sidOrd) ? null : reader.GetInt32(sidOrd);
 
             return d;
         }
