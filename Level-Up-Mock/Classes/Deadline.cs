@@ -55,7 +55,7 @@ namespace Level_Up_Mock
         // midnight at the start of today, which has already gone.
         public static bool IsValidDeadlineDate(DateTime date)
         {
-            return date.Date >= DateTime.Today;
+            return date.Date > DateTime.Today;
         }
 
         // ── Countdown logic (Algorithm 6.1) ───────────────────────────────────────────
@@ -80,7 +80,7 @@ namespace Level_Up_Mock
             if (remaining.TotalSeconds <= 0) return "OVERDUE";
 
             if (remaining.TotalDays >= 1)
-                return $"{(int)remaining.TotalDays}d {remaining.Hours}h {remaining.Minutes}m {remaining.Seconds}s";
+                return $"{(int)remaining.TotalDays}d {(int)remaining.TotalHours}h {remaining.Minutes}m {remaining.Seconds}s";
 
             if (remaining.TotalHours >= 1)
                 return $"{remaining.Hours}h {remaining.Minutes}m {remaining.Seconds}s";
