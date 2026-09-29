@@ -107,7 +107,7 @@ namespace Level_Up_Mock
                 case PurchaseResult.AlreadyOwned:
                     ShowMessage("You already own this item.", RED);
                     break;
-                case PurchaseResult.NotEnoughXp:
+                case PurchaseResult.NotEnoughXP:
                     ShowMessage($"Not enough XP. You need {item.XPCost} XP.", RED);
                     break;
                 case PurchaseResult.SaveFailed:
