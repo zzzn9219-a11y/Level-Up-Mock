@@ -46,7 +46,7 @@ namespace Level_Up_Mock
         // ── frmDataEntry overrides ────────────────────────────────────────────────────
 
         // Algorithm 6.2 checks. All checks run so every problem is shown at once.
-        public override bool ValidateInput()
+        protected override bool ValidateInput()
         {
             bool valid = true;
 
