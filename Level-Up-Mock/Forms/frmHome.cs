@@ -114,7 +114,7 @@ namespace Level_Up_Mock
             try
             {
                 // UseShellExecute opens the URL in the user's default browser.
-                Process.Start(new ProcessStartInfo(url) { UseShellExecute = true });
+                Process.Start(url);
             }
             catch (Exception ex)
             {

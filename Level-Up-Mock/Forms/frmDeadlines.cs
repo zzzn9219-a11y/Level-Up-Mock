@@ -70,14 +70,7 @@ namespace Level_Up_Mock
                     MessageBoxButtons.OK, MessageBoxIcon.Error);
                 return;
             }
-
-            // Take the finished deadline out of the list straight away.
-            foreach (var d in _deadlines)
-            {
-                if (d.DeadlineID == deadline.DeadlineID)
-                    _deadlines.Remove(d);
-            }
-            RenderDeadlineList();
+            LoadDeadlines();
         }
 
         // Updates every countdown each second, worked out fresh from the clock (Algorithm 6.1).
