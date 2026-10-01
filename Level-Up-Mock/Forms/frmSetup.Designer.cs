@@ -14,6 +14,11 @@ namespace Level_Up_Mock
         // Builds and positions all controls for the two-stage setup form.
         private void InitializeComponent()
         {
+            // Lay out at 96 DPI and let WinForms scale everything up on high-DPI screens.
+            this.SuspendLayout();
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Create Profile";
             this.Size = new Size(640, 600);
@@ -64,6 +69,9 @@ namespace Level_Up_Mock
 
             // ── Add top-level controls ────────────────────────────────────────────────
             this.Controls.AddRange(new Control[] { lblHeading, lblStepIndicator, pnlStage1, pnlStage2 });
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         // Populates pnlStage1 with personal-details fields and navigation button.

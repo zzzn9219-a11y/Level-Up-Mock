@@ -124,11 +124,14 @@ namespace Level_Up_Mock
         // Adds the given amount to the user's XP balance and persists the change.
         // Negative amounts are allowed for XP deductions (e.g. store purchases).
         // Automatically checks for level-up after every XP change.
-        public void AddXP(int amount)
+        // Returns false if the database write failed. The in-memory XP is only changed after
+        // the write succeeds, so the object never disagrees with the database. The store
+        // relies on this to know whether an XP deduction actually happened.
+        public bool AddXP(int amount)
         {
-            _xp += amount;
+            int newXP = _xp + amount;
             // Guard against XP going below zero (should not happen normally).
-            if (_xp < 0) _xp = 0;
+            if (newXP < 0) newXP = 0;
 
             // Persist the updated XP value.
             try
@@ -136,17 +139,21 @@ namespace Level_Up_Mock
                 var conn = DatabaseManager.Instance.GetConnection();
                 using var cmd = conn.CreateCommand();
                 cmd.CommandText = "UPDATE User SET XP = @xp WHERE UserID = @id;";
-                cmd.Parameters.AddWithValue("@xp", _xp);
+                cmd.Parameters.AddWithValue("@xp", newXP);
                 cmd.Parameters.AddWithValue("@id", _userID);
                 cmd.ExecuteNonQuery();
             }
             catch (Exception ex)
             {
                 System.Diagnostics.Debug.WriteLine($"User.AddXP update error: {ex.Message}");
+                return false;
             }
+
+            _xp = newXP;
 
             // Check whether the XP gain has triggered one or more level-ups.
             CheckAndApplyLevelUp();
+            return true;
         }
 
         // Adds the given amount to the user's reward balance and persists the change.
@@ -296,8 +303,9 @@ namespace Level_Up_Mock
             {
                 var conn = DatabaseManager.Instance.GetConnection();
                 using var cmd = conn.CreateCommand();
-                // Leaderboard order: most study time first. CreatedAt is secondary for stability.
-                cmd.CommandText = "SELECT * FROM User ORDER BY TotalStudyMinutes DESC, CreatedAt DESC;";
+                // Leaderboard order: most study time first. Ties are broken by Username, then
+                // UserID, so tied profiles always appear in the same order between visits.
+                cmd.CommandText = "SELECT * FROM User ORDER BY TotalStudyMinutes DESC, Username ASC, UserID ASC;";
 
                 using var reader = cmd.ExecuteReader();
                 while (reader.Read())

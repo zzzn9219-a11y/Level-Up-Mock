@@ -15,6 +15,11 @@ namespace Level_Up_Mock
         // Builds and positions all controls that make up the splash screen.
         private void InitializeComponent()
         {
+            // Lay out at 96 DPI and let WinForms scale everything up on high-DPI screens.
+            this.SuspendLayout();
+            this.AutoScaleDimensions = new SizeF(96F, 96F);
+            this.AutoScaleMode = AutoScaleMode.Dpi;
+
             components = new System.ComponentModel.Container();
 
             // ── Form properties ───────────────────────────────────────────────────────
@@ -77,6 +82,9 @@ namespace Level_Up_Mock
 
             // ── Add controls to form ──────────────────────────────────────────────────
             this.Controls.AddRange(new Control[] { lblTitle, lblSubtitle, lblStatus });
+
+            this.ResumeLayout(false);
+            this.PerformLayout();
         }
 
         // ── Control declarations ──────────────────────────────────────────────────────
