@@ -436,3 +436,5 @@ $RECYCLE.BIN/
 *.lnk
 
 # End of https://www.toptal.com/developers/gitignore/api/dotnetcore,csharp,windows
+# macOS Finder files
+.DS_Store
