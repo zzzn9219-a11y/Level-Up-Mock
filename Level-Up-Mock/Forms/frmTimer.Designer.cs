@@ -23,7 +23,7 @@ namespace Level_Up_Mock
 
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Study Timer";
-            this.Size = new Size(700, 540);
+            this.Size = new Size(700, 620);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(10, 14, 26);
             this.ForeColor = Color.White;
@@ -140,7 +140,7 @@ namespace Level_Up_Mock
             pnlSummary = new Panel
             {
                 Location = new Point(30, 360),
-                Size = new Size(630, 140),
+                Size = new Size(630, 220),
                 BackColor = Color.FromArgb(20, 24, 40),
                 Visible = false
             };
@@ -212,7 +212,7 @@ namespace Level_Up_Mock
                 BackColor = Color.FromArgb(67, 97, 238),
                 FlatStyle = FlatStyle.Flat,
                 Size = new Size(150, 40),
-                Location = new Point(300, 96)
+                Location = new Point(300, 168)
             };
             btnSaveSession.FlatAppearance.BorderSize = 0;
             btnSaveSession.Click += btnSaveSession_Click;
@@ -225,14 +225,73 @@ namespace Level_Up_Mock
                 BackColor = Color.Transparent,
                 FlatStyle = FlatStyle.Flat,
                 Size = new Size(100, 40),
-                Location = new Point(460, 96)
+                Location = new Point(460, 168)
             };
             btnDiscardSession.FlatAppearance.BorderColor = Color.FromArgb(160, 168, 192);
             btnDiscardSession.Click += btnDiscardSession_Click;
 
+            // Topic logging: marking a topic complete creates a quest (Algorithm 7.1).
+            var lblTopicHeading = new Label
+            {
+                Text = "Topic covered:",
+                Font = new Font("Segoe UI", 9f),
+                ForeColor = Color.FromArgb(160, 168, 192),
+                Location = new Point(16, 100),
+                AutoSize = true
+            };
+
+            txtTopic = new TextBox
+            {
+                Location = new Point(16, 120),
+                Size = new Size(270, 28),
+                MaxLength = Quest.MAX_TOPIC_LENGTH,
+                BackColor = Color.FromArgb(40, 46, 70),
+                ForeColor = Color.White,
+                BorderStyle = BorderStyle.FixedSingle,
+                Font = new Font("Segoe UI", 10f)
+            };
+
+            chkTopicComplete = new CheckBox
+            {
+                Text = "Mark topic complete (creates a quest)",
+                Font = new Font("Segoe UI", 9f),
+                ForeColor = Color.White,
+                Location = new Point(16, 154),
+                AutoSize = true
+            };
+            chkTopicComplete.CheckedChanged += chkTopicComplete_CheckedChanged;
+
+            cmbDifficulty = new ComboBox
+            {
+                Location = new Point(16, 180),
+                Size = new Size(130, 28),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                BackColor = Color.FromArgb(40, 46, 70),
+                ForeColor = Color.White,
+                FlatStyle = FlatStyle.Flat,
+                Font = new Font("Segoe UI", 10f),
+                Enabled = false
+            };
+            cmbDifficulty.Items.AddRange(new object[]
+            {
+                Quest.DIFFICULTY_EASY, Quest.DIFFICULTY_MEDIUM, Quest.DIFFICULTY_HARD
+            });
+            cmbDifficulty.SelectedItem = Quest.DIFFICULTY_MEDIUM;
+
+            lblTopicError = new Label
+            {
+                Text = string.Empty,
+                Font = new Font("Segoe UI", 9f),
+                ForeColor = Color.FromArgb(239, 35, 60),
+                Location = new Point(156, 184),
+                AutoSize = true,
+                Visible = false
+            };
+
             pnlSummary.Controls.AddRange(new Control[]
             {
                 lblSummaryTitle, lblSummarySubject, lblSummaryDuration, lblSummaryXP,
+                lblTopicHeading, txtTopic, chkTopicComplete, cmbDifficulty, lblTopicError,
                 lblNotesHeading, txtNotes, btnSaveSession, btnDiscardSession
             });
 
@@ -263,5 +322,9 @@ namespace Level_Up_Mock
         private TextBox txtNotes = null!;
         private Button btnSaveSession = null!;
         private Button btnDiscardSession = null!;
+        private TextBox txtTopic = null!;
+        private CheckBox chkTopicComplete = null!;
+        private ComboBox cmbDifficulty = null!;
+        private Label lblTopicError = null!;
     }
 }

@@ -1,0 +1,132 @@
+namespace Level_Up_Mock
+{
+    partial class frmAvatarSetup
+    {
+        private System.ComponentModel.IContainer components = null;
+
+        protected override void Dispose(bool disposing)
+        {
+            if (disposing && (components != null))
+                components.Dispose();
+            base.Dispose(disposing);
+        }
+
+        // Builds and positions all controls for the first-time avatar customisation screen.
+        private void InitializeComponent()
+        {
+            // ── Form properties ───────────────────────────────────────────────────────
+            this.Text = "Level Up — Create Your Hunter";
+            this.Size = new Size(640, 560);
+            this.StartPosition = FormStartPosition.CenterScreen;
+            this.BackColor = Color.FromArgb(10, 14, 26);
+            this.ForeColor = Color.White;
+            this.FormBorderStyle = FormBorderStyle.FixedSingle;
+            this.MaximizeBox = false;
+            this.Load += frmAvatarSetup_Load;
+
+            // ── Title ─────────────────────────────────────────────────────────────────
+            var lblTitle = new Label
+            {
+                Text = "LEVEL UP — Create Your Hunter",
+                Font = new Font("Segoe UI", 15f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(255, 215, 0),
+                Location = new Point(20, 16),
+                AutoSize = true
+            };
+
+            // ── Live avatar preview ───────────────────────────────────────────────────
+            picAvatar = new PictureBox
+            {
+                Size = new Size(220, 300),
+                Location = new Point(24, 64),
+                BackColor = Color.FromArgb(20, 24, 40),
+                SizeMode = PictureBoxSizeMode.Zoom,
+                BorderStyle = BorderStyle.FixedSingle
+            };
+
+            // ── Skin tone swatches ────────────────────────────────────────────────────
+            var lblSkinTone = new Label
+            {
+                Text = "Skin Tone",
+                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(268, 64),
+                AutoSize = true
+            };
+            pnlSkinTones = new Panel
+            {
+                Location = new Point(268, 92),
+                Size = new Size(320, 40),
+                BackColor = Color.Transparent
+            };
+
+            // ── Hair style dropdown ───────────────────────────────────────────────────
+            var lblHair = new Label
+            {
+                Text = "Hair Style",
+                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(268, 150),
+                AutoSize = true
+            };
+            cmbHair = new ComboBox
+            {
+                Font = new Font("Segoe UI", 10.5f),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Location = new Point(268, 176),
+                Size = new Size(320, 28)
+            };
+            cmbHair.SelectedIndexChanged += cmbHair_SelectedIndexChanged;
+
+            // ── Background dropdown ───────────────────────────────────────────────────
+            var lblBackground = new Label
+            {
+                Text = "Background",
+                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Location = new Point(268, 224),
+                AutoSize = true
+            };
+            cmbBackground = new ComboBox
+            {
+                Font = new Font("Segoe UI", 10.5f),
+                DropDownStyle = ComboBoxStyle.DropDownList,
+                Location = new Point(268, 250),
+                Size = new Size(320, 28)
+            };
+            cmbBackground.SelectedIndexChanged += cmbBackground_SelectedIndexChanged;
+
+            // ── Confirm button ────────────────────────────────────────────────────────
+            btnConfirm = new Button
+            {
+                Text = "Confirm and Continue →",
+                Font = new Font("Segoe UI", 11f, FontStyle.Bold),
+                ForeColor = Color.White,
+                BackColor = Color.FromArgb(67, 97, 238),
+                FlatStyle = FlatStyle.Flat,
+                Location = new Point(268, 380),
+                Size = new Size(320, 44)
+            };
+            btnConfirm.FlatAppearance.BorderColor = Color.FromArgb(102, 128, 255);
+            btnConfirm.FlatAppearance.BorderSize = 2;
+            btnConfirm.Click += btnConfirm_Click;
+
+            // ── Assemble form ─────────────────────────────────────────────────────────
+            this.Controls.AddRange(new Control[]
+            {
+                lblTitle, picAvatar,
+                lblSkinTone, pnlSkinTones,
+                lblHair, cmbHair,
+                lblBackground, cmbBackground,
+                btnConfirm
+            });
+        }
+
+        // ── Control declarations ──────────────────────────────────────────────────────
+        private PictureBox picAvatar = null!;
+        private Panel pnlSkinTones = null!;
+        private ComboBox cmbHair = null!;
+        private ComboBox cmbBackground = null!;
+        private Button btnConfirm = null!;
+    }
+}
