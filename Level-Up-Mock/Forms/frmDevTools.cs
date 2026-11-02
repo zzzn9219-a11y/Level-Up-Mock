@@ -53,6 +53,20 @@ namespace Level_Up_Mock
                 DevTools.AddRewards(_user, 200);
                 MessageBox.Show("Done", "Dev Tools", MessageBoxButtons.OK, MessageBoxIcon.Information);
             });
+
+            // Quest testing: fake time passing so a quest does not take a week to unlock.
+            AddAction("Quests: unlock pending now", () => ShowCount(DevTools.UnlockPendingQuests(_user.UserID)));
+            AddAction("Quests: expire active in 1 min", () => ShowCount(DevTools.ExpireActiveQuestsSoon(_user.UserID)));
+            AddAction("Quests: expire active now", () => ShowCount(DevTools.ExpireActiveQuestsNow(_user.UserID)));
+        }
+
+        // ── Private helpers ───────────────────────────────────────────────────────────
+
+        // Tells the developer how many rows a test button changed (-1 means it failed).
+        private static void ShowCount(int rows)
+        {
+            string message = rows < 0 ? "The change failed. See the Output window." : $"{rows} quest(s) changed.";
+            MessageBox.Show(message, "Dev Tools", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
         // ── Public methods ────────────────────────────────────────────────────────────
