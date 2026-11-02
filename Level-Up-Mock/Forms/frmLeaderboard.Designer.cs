@@ -47,7 +47,7 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
-            btnBack = new Button
+            btnBack = new RoundedButton
             {
                 Text = "← Back",
                 Font = new Font("Segoe UI", 9f),

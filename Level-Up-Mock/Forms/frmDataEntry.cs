@@ -25,7 +25,7 @@ namespace Level_Up_Mock
             this.MaximizeBox = false;
             this.MinimizeBox = false;
 
-            btnSave = new Button
+            btnSave = new RoundedButton
             {
                 Text = "Save",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
@@ -37,7 +37,7 @@ namespace Level_Up_Mock
             btnSave.FlatAppearance.BorderSize = 0;
             btnSave.Click += btnSave_Click;
 
-            btnCancel = new Button
+            btnCancel = new RoundedButton
             {
                 Text = "Cancel",
                 Font = new Font("Segoe UI", 11f),

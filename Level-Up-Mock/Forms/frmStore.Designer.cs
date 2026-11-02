@@ -43,7 +43,7 @@ namespace Level_Up_Mock
             };
 
             // Balances sit at the very top — the first thing a shopper needs to see.
-            var pnlBalance = new Panel
+            var pnlBalance = new RoundedPanel
             {
                 Location = new Point(420, 14),
                 Size = new Size(340, 34),
@@ -71,7 +71,7 @@ namespace Level_Up_Mock
             };
             pnlBalance.Controls.AddRange(new Control[] { lblXPBalance, lblRewardsBalance });
 
-            btnBack = new Button
+            btnBack = new RoundedButton
             {
                 Text = "← Back",
                 Font = new Font("Segoe UI", 9.5f),
@@ -99,7 +99,7 @@ namespace Level_Up_Mock
             };
 
             // ── Detail panel (step two of the purchase) ───────────────────────────────
-            var pnlDetail = new Panel
+            var pnlDetail = new RoundedPanel
             {
                 Location = new Point(20, 422),
                 Size = new Size(848, 164),
@@ -142,7 +142,7 @@ namespace Level_Up_Mock
                 Size = new Size(460, 42)
             };
 
-            btnPurchase = new Button
+            btnPurchase = new RoundedButton
             {
                 Text = "Confirm Buy",
                 Font = new Font("Segoe UI", 12f, FontStyle.Bold),
@@ -185,7 +185,7 @@ namespace Level_Up_Mock
         // Creates a consistently styled category tab button.
         private Button MakeTab(string text, int x)
         {
-            var tab = new Button
+            var tab = new RoundedButton
             {
                 Text = text,
                 Font = new Font("Segoe UI", 10f, FontStyle.Bold),

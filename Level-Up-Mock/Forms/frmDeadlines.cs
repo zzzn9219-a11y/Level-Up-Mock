@@ -154,17 +154,12 @@ namespace Level_Up_Mock
             // Deadlines with no subject use the default white.
             Color accent = subject?.GetColour() ?? Color.White;
 
-            var row = new Panel
+            // The subject colour is drawn as a strip down the left edge of the rounded row.
+            var row = new RoundedPanel
             {
                 Size = new Size(pnlList.ClientSize.Width - SystemInformation.VerticalScrollBarWidth, Ui.S(this, 76)),
-                BackColor = ROW_COLOUR
-            };
-
-            var bar = new Panel
-            {
-                Location = Ui.P(this, 0, 0),
-                Size = Ui.S(this, 6, 76),
-                BackColor = accent
+                BackColor = ROW_COLOUR,
+                AccentColour = accent
             };
 
             var lblName = new Label
@@ -203,13 +198,13 @@ namespace Level_Up_Mock
             var btnDone = MakeRowButton("✓ Done", row.Width - Ui.S(this, 96), Color.FromArgb(46, 160, 100));
             btnDone.Click += (s, e) => CompleteDeadline(deadline);
 
-            row.Controls.AddRange(new Control[] { bar, lblName, lblDate, lblCountdown, btnEdit, btnDone });
+            row.Controls.AddRange(new Control[] { lblName, lblDate, lblCountdown, btnEdit, btnDone });
             return row;
         }
 
         private Button MakeRowButton(string text, int x, Color backColour)
         {
-            var btn = new Button
+            var btn = new RoundedButton
             {
                 Text = text,
                 Font = new Font("Segoe UI", 9.5f, FontStyle.Bold),
