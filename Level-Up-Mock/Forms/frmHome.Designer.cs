@@ -29,7 +29,7 @@ namespace Level_Up_Mock
 
             // ── Form properties ───────────────────────────────────────────────────────
             this.Text = "Level Up — Home";
-            this.ClientSize = new Size(888, 600);
+            this.ClientSize = new Size(888, 628);
             this.StartPosition = FormStartPosition.CenterScreen;
             this.BackColor = Color.FromArgb(10, 14, 26);
             this.ForeColor = Color.White;
@@ -173,7 +173,7 @@ namespace Level_Up_Mock
             var pnlDeadlines = new Panel
             {
                 Location = new Point(20, 304),
-                Size = new Size(544, 116),
+                Size = new Size(416, 116),
                 BackColor = navy
             };
 
@@ -184,7 +184,7 @@ namespace Level_Up_Mock
                     Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                     ForeColor = Color.White,
                     Location = new Point(14, 12 + i * 32),
-                    Size = new Size(300, 28),
+                    Size = new Size(220, 28),
                     TextAlign = ContentAlignment.MiddleLeft,
                     AutoEllipsis = true,
                     Visible = false
@@ -193,8 +193,8 @@ namespace Level_Up_Mock
                 {
                     Font = new Font("Consolas", 11.5f, FontStyle.Bold),
                     ForeColor = Color.White,
-                    Location = new Point(316, 12 + i * 32),
-                    Size = new Size(214, 28),
+                    Location = new Point(240, 12 + i * 32),
+                    Size = new Size(166, 28),
                     TextAlign = ContentAlignment.MiddleRight,
                     Visible = false
                 };
@@ -213,29 +213,83 @@ namespace Level_Up_Mock
             };
             pnlDeadlines.Controls.Add(lblNoDeadlines);
 
-            // ── Past papers panel ─────────────────────────────────────────────────────
-            var lblPastPapersHeading = MakeHeading("PAST PAPERS", 580, 284);
+            // ── Quests panel (three soonest active quests) ──────────────────────────
+            var lblQuestsHeading = MakeHeading("QUESTS", 448, 284);
 
-            var pnlPastPapers = new Panel
+            var pnlQuests = new Panel
             {
-                Location = new Point(580, 304),
-                Size = new Size(288, 116),
+                Location = new Point(448, 304),
+                Size = new Size(420, 116),
                 BackColor = navy
             };
 
-            var lblPastPaperHint = new Label
+            for (int i = 0; i < 3; i++)
             {
-                Text = "Choose a subject:",
-                Font = new Font("Segoe UI", 9f),
+                _questTopicLabels[i] = new Label
+                {
+                    Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    Location = new Point(12, 6 + i * 30),
+                    Size = new Size(200, 26),
+                    TextAlign = ContentAlignment.MiddleLeft,
+                    AutoEllipsis = true,
+                    Visible = false
+                };
+                _questCountdownLabels[i] = new Label
+                {
+                    Font = new Font("Consolas", 10f, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    Location = new Point(214, 6 + i * 30),
+                    Size = new Size(120, 26),
+                    TextAlign = ContentAlignment.MiddleRight,
+                    Visible = false
+                };
+                _questCompleteButtons[i] = new Button
+                {
+                    Text = "Done",
+                    Font = new Font("Segoe UI", 9f, FontStyle.Bold),
+                    ForeColor = Color.White,
+                    Location = new Point(340, 6 + i * 30),
+                    Size = new Size(68, 26),
+                    Visible = false
+                };
+                Ui.StyleFlatButton(_questCompleteButtons[i], Color.FromArgb(46, 160, 90), Color.FromArgb(60, 190, 110));
+                _questCompleteButtons[i].FlatAppearance.BorderSize = 0;
+                pnlQuests.Controls.Add(_questTopicLabels[i]);
+                pnlQuests.Controls.Add(_questCountdownLabels[i]);
+                pnlQuests.Controls.Add(_questCompleteButtons[i]);
+            }
+
+            lblNoQuests = new Label
+            {
+                Text = "No active quests",
+                Font = new Font("Segoe UI", 11f),
                 ForeColor = grey,
-                Location = new Point(12, 8),
-                AutoSize = true
+                Dock = DockStyle.Fill,
+                TextAlign = ContentAlignment.MiddleCenter,
+                Visible = false
             };
+            pnlQuests.Controls.Add(lblNoQuests);
+
+            // Small note under the rows, e.g. "2 quests unlock soon".
+            lblQuestsUpcoming = new Label
+            {
+                Text = string.Empty,
+                Font = new Font("Segoe UI", 8.5f),
+                ForeColor = grey,
+                Location = new Point(12, 96),
+                AutoSize = true,
+                Visible = false
+            };
+            pnlQuests.Controls.Add(lblQuestsUpcoming);
+
+            // ── Past papers strip (one line to save height) ──────────────────────────
+            var lblPastPapersHeading = MakeHeading("PAST PAPERS", 20, 438);
 
             cmbPastPaperSubject = new ComboBox
             {
-                Location = new Point(12, 28),
-                Size = new Size(264, 28),
+                Location = new Point(130, 432),
+                Size = new Size(300, 28),
                 DropDownStyle = ComboBoxStyle.DropDownList,
                 BackColor = Color.FromArgb(40, 46, 70),
                 ForeColor = Color.White,
@@ -248,8 +302,8 @@ namespace Level_Up_Mock
                 Text = "Open Past Papers  ↗",
                 Font = new Font("Segoe UI", 10f, FontStyle.Bold),
                 ForeColor = Color.White,
-                Location = new Point(12, 62),
-                Size = new Size(264, 32)
+                Location = new Point(440, 431),
+                Size = new Size(200, 30)
             };
             Ui.StyleFlatButton(btnOpenPastPapers, blue, Color.FromArgb(92, 120, 250));
             btnOpenPastPapers.FlatAppearance.BorderSize = 0;
@@ -260,22 +314,17 @@ namespace Level_Up_Mock
                 Text = string.Empty,
                 Font = new Font("Segoe UI", 8.5f),
                 ForeColor = Color.FromArgb(239, 35, 60),
-                Location = new Point(12, 96),
+                Location = new Point(650, 438),
                 AutoSize = true,
                 Visible = false
             };
-
-            pnlPastPapers.Controls.AddRange(new Control[]
-            {
-                lblPastPaperHint, cmbPastPaperSubject, btnOpenPastPapers, lblPastPaperError
-            });
 
             // Fires every second to refresh the deadline countdowns (Algorithm 6.1).
             tmrCountdown = new System.Windows.Forms.Timer(components) { Interval = 1000 };
             tmrCountdown.Tick += tmrCountdown_Tick;
 
             // ── Navigation grid: 4 columns spanning the full width ────────────────────
-            var lblNavHeading = MakeHeading("NAVIGATE", 20, 432);
+            var lblNavHeading = MakeHeading("NAVIGATE", 20, 470);
 
             btnTimer = MakeNavButton("⏱  Study Timer", 0, 0, blue);
             btnTimer.Click += btnTimer_Click;
@@ -295,6 +344,8 @@ namespace Level_Up_Mock
             btnChallenge.Enabled = false;
             var btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
             btnSettings.Enabled = false;
+            var btnQuests = MakeNavButton("📜  Quests", 3, 1, navy);
+            btnQuests.Enabled = false;
 
             // ── Assemble form ─────────────────────────────────────────────────────────
             this.Controls.AddRange(new Control[]
@@ -303,10 +354,11 @@ namespace Level_Up_Mock
                 pnlProfile,
                 lblSubjectsHeading, pnlSubjectChips,
                 lblDeadlinesHeading, pnlDeadlines,
-                lblPastPapersHeading, pnlPastPapers,
+                lblQuestsHeading, pnlQuests,
+                lblPastPapersHeading, cmbPastPaperSubject, btnOpenPastPapers, lblPastPaperError,
                 lblNavHeading,
                 btnTimer, btnStore, btnTracker, btnLeaderboard,
-                btnDeadlines, btnChallenge, btnSettings
+                btnDeadlines, btnChallenge, btnSettings, btnQuests
             });
 
 #if DEBUG
@@ -345,7 +397,7 @@ namespace Level_Up_Mock
         // Creates a consistently styled navigation button in the 4-column grid.
         private static Button MakeNavButton(string text, int column, int row, Color backColour)
         {
-            const int width = 203, height = 62, gap = 12;
+            const int width = 203, height = 56, gap = 12;
 
             var btn = new Button
             {
@@ -353,7 +405,7 @@ namespace Level_Up_Mock
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 ForeColor = Color.White,
                 Size = new Size(width, height),
-                Location = new Point(20 + column * (width + gap), 452 + row * (height + 8)),
+                Location = new Point(20 + column * (width + gap), 490 + row * (height + 8)),
                 TextAlign = ContentAlignment.MiddleCenter
             };
             Ui.StyleFlatButton(btn, backColour, ControlPaint.Light(backColour, 0.25f));
@@ -377,6 +429,11 @@ namespace Level_Up_Mock
         private readonly Label[] _deadlineNameLabels = new Label[3];
         private readonly Label[] _deadlineCountdownLabels = new Label[3];
         private Label lblNoDeadlines = null!;
+        private readonly Label[] _questTopicLabels = new Label[3];
+        private readonly Label[] _questCountdownLabels = new Label[3];
+        private readonly Button[] _questCompleteButtons = new Button[3];
+        private Label lblNoQuests = null!;
+        private Label lblQuestsUpcoming = null!;
         private ComboBox cmbPastPaperSubject = null!;
         private Button btnOpenPastPapers = null!;
         private Label lblPastPaperError = null!;
