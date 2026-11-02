@@ -345,8 +345,8 @@ namespace Level_Up_Mock
             btnChallenge.Enabled = false;
             var btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
             btnSettings.Enabled = false;
-            var btnQuests = MakeNavButton("📜  Quests", 3, 1, navy);
-            btnQuests.Enabled = false;
+            btnQuests = MakeNavButton("📜  Quests", 3, 1, navy);
+            btnQuests.Click += btnQuests_Click;
 
             // ── Assemble form ─────────────────────────────────────────────────────────
             this.Controls.AddRange(new Control[]
@@ -433,6 +433,7 @@ namespace Level_Up_Mock
         private readonly Label[] _questTopicLabels = new Label[3];
         private readonly Label[] _questCountdownLabels = new Label[3];
         private readonly Button[] _questCompleteButtons = new Button[3];
+        private Button btnQuests = null!;
         private Label lblNoQuests = null!;
         private Label lblQuestsUpcoming = null!;
         private ComboBox cmbPastPaperSubject = null!;

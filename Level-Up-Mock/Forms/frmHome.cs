@@ -13,6 +13,7 @@ namespace Level_Up_Mock
         // The home screen only shows the three soonest deadlines so the dashboard stays
         // uncluttered. The full list is on frmDeadlines.
         private const int MAX_HOME_DEADLINES = 3;
+        private const int MAX_HOME_QUESTS = 3;
 
         private static readonly Color RED = Color.FromArgb(239, 35, 60);
 
@@ -22,11 +23,23 @@ namespace Level_Up_Mock
         private List<Subject> _subjects = new();
         private List<Deadline> _activeDeadlines = new();
 
+        // Quests: the active ones are shown with a countdown. The pending ones are kept so
+        // the countdown tick can tell when one unlocks while the app is open.
+        private List<Quest> _activeQuests = new();
+        private List<Quest> _pendingQuests = new();
+
         // ── Constructor ───────────────────────────────────────────────────────────────
 
         public frmHome()
         {
             InitializeComponent();
+
+            // Each "Done" button in the quests panel knows its row through its Tag.
+            for (int i = 0; i < MAX_HOME_QUESTS; i++)
+            {
+                _questCompleteButtons[i].Tag = i;
+                _questCompleteButtons[i].Click += btnQuestDone_Click;
+            }
         }
 
         // ── Event handlers ────────────────────────────────────────────────────────────
@@ -78,6 +91,12 @@ namespace Level_Up_Mock
         }
 #endif
 
+        // "Quests" navigation button.
+        private void btnQuests_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmQuests(_user!, _subjects));
+        }
+
         // "Log Out" button — returns to account select.
         private void btnLogOut_Click(object sender, EventArgs e)
         {
@@ -98,6 +117,34 @@ namespace Level_Up_Mock
             }
 
             UpdateCountdowns();
+            UpdateQuestCountdowns();
+        }
+
+        // "Done" button on a quest row (Algorithm 7.3). Confirms first, because a completed
+        // quest cannot be undone.
+        private void btnQuestDone_Click(object? sender, EventArgs e)
+        {
+            if (_user == null || sender is not Button button || button.Tag is not int index) return;
+            if (index >= _activeQuests.Count) return;
+
+            var quest = _activeQuests[index];
+            var confirm = MessageBox.Show(
+                $"Mark \"{quest.TopicName}\" as revisited?\n+{quest.RewardOnSuccess} rewards",
+                "Complete Quest", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirm != DialogResult.Yes) return;
+
+            if (quest.CompleteQuest(_user))
+            {
+                MessageBox.Show($"+{quest.RewardOnSuccess} rewards!", "Quest Complete",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            else
+            {
+                // The deadline passed or the save failed. Reloading shows the true state.
+                MessageBox.Show("This quest can no longer be completed.", "Quest",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            LoadQuests();
         }
 
         // Algorithm 11.1 sub-task 2 — check a subject is selected, get the URL, open it.
@@ -174,6 +221,7 @@ namespace Level_Up_Mock
             UpdateSubjectChips();
             UpdateAvatar();
             LoadDeadlines();
+            LoadQuests();
             LoadPastPaperSubjects();
         }
 
@@ -300,6 +348,121 @@ namespace Level_Up_Mock
         {
             var subject = _subjects.FirstOrDefault(s => s.SubjectID == deadline.SubjectID);
             return subject?.GetColour() ?? Color.White;
+        }
+
+        // Loads the quests (Algorithm 7.2). Every quest is first checked against the clock,
+        // so quests that unlocked or ran out while the app was closed are brought up to date.
+        private void LoadQuests()
+        {
+            if (_user == null) return;
+
+            var failed = Quest.RefreshStatusesForUser(_user);
+            if (failed.Count > 0)
+            {
+                int lost = failed.Sum(q => q.RewardOnFailure);
+                string topics = string.Join(", ", failed.Select(q => $"\"{q.TopicName}\""));
+                MessageBox.Show(
+                    $"You missed {failed.Count} quest{(failed.Count != 1 ? "s" : "")}: {topics}.\n-{lost} rewards",
+                    "Quest Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            _activeQuests = Quest.GetQuestsByStatus(_user.UserID, Quest.STATUS_ACTIVE);
+            _pendingQuests = Quest.GetQuestsByStatus(_user.UserID, Quest.STATUS_PENDING);
+
+            // Rewards may have changed (quest completed or failed), so refresh the label.
+            lblRewards.Text = $"★ {_user.Rewards} Rewards";
+
+            RenderQuestPanel();
+            ShowQuestCountdownText();
+        }
+
+        // Writes the current countdown text into each visible quest row. It does no status
+        // checks, so LoadQuests can use it without ever calling itself again.
+        private void ShowQuestCountdownText()
+        {
+            int shown = Math.Min(_activeQuests.Count, MAX_HOME_QUESTS);
+            for (int i = 0; i < shown; i++)
+            {
+                _questCountdownLabels[i].Text = _activeQuests[i].GetCountdownString();
+            }
+        }
+
+        // Fills the quest rows with topic names, subject colours and Done buttons.
+        private void RenderQuestPanel()
+        {
+            int shown = Math.Min(_activeQuests.Count, MAX_HOME_QUESTS);
+            lblNoQuests.Visible = shown == 0;
+
+            for (int i = 0; i < MAX_HOME_QUESTS; i++)
+            {
+                bool visible = i < shown;
+                _questTopicLabels[i].Visible = visible;
+                _questCountdownLabels[i].Visible = visible;
+                _questCompleteButtons[i].Visible = visible;
+                if (!visible) continue;
+
+                var quest = _activeQuests[i];
+                Color colour = _subjects.FirstOrDefault(s => s.SubjectID == quest.SubjectID)?.GetColour() ?? Color.White;
+                _questTopicLabels[i].Text = quest.TopicName;
+                _questTopicLabels[i].ForeColor = colour;
+                _questCountdownLabels[i].ForeColor = colour;
+            }
+
+            // A note under the rows when more quests are waiting.
+            int extra = _activeQuests.Count - shown;
+            int pending = _pendingQuests.Count;
+            var notes = new List<string>();
+            if (extra > 0) notes.Add($"+{extra} more active");
+            if (pending > 0) notes.Add($"{pending} unlock{(pending == 1 ? "s" : "")} soon");
+            lblQuestsUpcoming.Text = string.Join("  ·  ", notes);
+            lblQuestsUpcoming.Visible = notes.Count > 0;
+        }
+
+        // Updates the quest countdowns every second from the clock (Algorithm 7.2).
+        private void UpdateQuestCountdowns()
+        {
+            if (_user == null) return;
+
+            // A pending quest reached its unlock time while the app is open: reload to show it.
+            if (_pendingQuests.Any(q => DateTime.Now >= q.DueDate))
+            {
+                LoadQuests();
+                return;
+            }
+
+            int shown = Math.Min(_activeQuests.Count, MAX_HOME_QUESTS);
+            for (int i = 0; i < shown; i++)
+            {
+                var quest = _activeQuests[i];
+
+                // < 0 so a quest is still alive at the exact moment of its deadline.
+                if (quest.GetTimeRemaining().TotalSeconds < 0)
+                {
+                    HandleExpiredQuest(quest);
+                    return;   // the list changed, so stop this pass and redraw
+                }
+                _questCountdownLabels[i].Text = quest.GetCountdownString();
+            }
+        }
+
+        // A quest ran out of time while the app is open. It is taken off the list first so
+        // the message cannot be shown twice, then marked failed (the penalty is taken once).
+        private void HandleExpiredQuest(Quest quest)
+        {
+            if (_user == null) return;
+
+            _activeQuests.Remove(quest);
+            tmrCountdown.Stop();   // keep ticks from stacking up behind the message box
+
+            if (quest.CheckAndUpdateStatus(_user) && quest.Status == Quest.STATUS_FAILED)
+            {
+                MessageBox.Show($"Quest failed: \"{quest.TopicName}\"\n-{quest.RewardOnFailure} rewards",
+                    "Quest Failed", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+            }
+
+            lblRewards.Text = $"★ {_user.Rewards} Rewards";
+            RenderQuestPanel();
+            tmrCountdown.Start();
         }
 
         // Fills the past paper dropdown with the user's subjects, keeping the current choice.
