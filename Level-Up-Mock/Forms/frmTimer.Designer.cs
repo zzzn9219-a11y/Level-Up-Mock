@@ -85,7 +85,7 @@ namespace Level_Up_Mock
             };
 
             // ── Timer control buttons ─────────────────────────────────────────────────
-            btnStart = new Button
+            btnStart = new RoundedButton
             {
                 Text = "Start",
                 Font = new Font("Segoe UI", 13f, FontStyle.Bold),
@@ -98,7 +98,7 @@ namespace Level_Up_Mock
             btnStart.FlatAppearance.BorderSize = 0;
             btnStart.Click += btnStart_Click;
 
-            btnPause = new Button
+            btnPause = new RoundedButton
             {
                 Text = "Pause",
                 Font = new Font("Segoe UI", 13f, FontStyle.Bold),
@@ -112,7 +112,7 @@ namespace Level_Up_Mock
             btnPause.FlatAppearance.BorderSize = 0;
             btnPause.Click += btnPause_Click;
 
-            btnStop = new Button
+            btnStop = new RoundedButton
             {
                 Text = "Stop",
                 Font = new Font("Segoe UI", 13f, FontStyle.Bold),
@@ -137,7 +137,7 @@ namespace Level_Up_Mock
 
             // ── Session summary panel ─────────────────────────────────────────────────
             // Shown after the user clicks Stop; hidden during active timing.
-            pnlSummary = new Panel
+            pnlSummary = new RoundedPanel
             {
                 Location = new Point(30, 360),
                 Size = new Size(630, 220),
@@ -204,7 +204,7 @@ namespace Level_Up_Mock
             };
 
             // Save and Discard action buttons inside the summary panel.
-            btnSaveSession = new Button
+            btnSaveSession = new RoundedButton
             {
                 Text = "Save Session",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
@@ -217,7 +217,7 @@ namespace Level_Up_Mock
             btnSaveSession.FlatAppearance.BorderSize = 0;
             btnSaveSession.Click += btnSaveSession_Click;
 
-            btnDiscardSession = new Button
+            btnDiscardSession = new RoundedButton
             {
                 Text = "Discard",
                 Font = new Font("Segoe UI", 11f),

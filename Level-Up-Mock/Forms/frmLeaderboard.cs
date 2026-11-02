@@ -82,10 +82,12 @@ namespace Level_Up_Mock
         {
             bool isCurrentUser = profile.UserID == _currentUser.UserID;
 
-            var row = new Panel
+            var row = new RoundedPanel
             {
                 Size = new Size(pnlRows.ClientSize.Width - SystemInformation.VerticalScrollBarWidth, Ui.S(this, 56)),
-                BackColor = isCurrentUser ? HIGHLIGHT : ROW_COLOUR
+                BackColor = isCurrentUser ? HIGHLIGHT : ROW_COLOUR,
+                // The user's own row gets a gold outline so it stands out.
+                BorderColour = isCurrentUser ? Theme.Gold : Theme.Border
             };
 
             var lblRank = new Label

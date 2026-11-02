@@ -49,7 +49,7 @@ namespace Level_Up_Mock
             };
 
             // Log out button (top right).
-            btnLogOut = new Button
+            btnLogOut = new RoundedButton
             {
                 Text = "Log Out",
                 Font = new Font("Segoe UI", 9f),
@@ -63,7 +63,7 @@ namespace Level_Up_Mock
 
             // ── Profile card ──────────────────────────────────────────────────────────
             // Dark navy panel holding the avatar, level, and XP bar.
-            var pnlProfile = new Panel
+            var pnlProfile = new RoundedPanel
             {
                 Location = new Point(20, 50),
                 Size = new Size(848, 160),
@@ -125,19 +125,20 @@ namespace Level_Up_Mock
             };
 
             // XP bar background track.
-            var pnlXPBarTrack = new Panel
+            var pnlXPBarTrack = new RoundedPanel
             {
                 Location = new Point(140, 124),
                 Size = new Size(570, 12),
-                BackColor = Color.FromArgb(40, 46, 70)
+                BackColor = Color.FromArgb(40, 46, 70),
+                CornerRadius = 6,
+                BorderColour = Color.Empty
             };
 
             // XP bar fill (resized dynamically in UpdateXPBar).
-            pnlXPBarFill = new Panel
+            pnlXPBarFill = new GradientBar
             {
                 Location = new Point(0, 0),
-                Size = new Size(4, 12),
-                BackColor = blue
+                Size = new Size(4, 12)
             };
             pnlXPBarTrack.Controls.Add(pnlXPBarFill);
 
@@ -170,7 +171,7 @@ namespace Level_Up_Mock
             // ── Upcoming deadlines panel (three soonest) ─────────────────────────────
             var lblDeadlinesHeading = MakeHeading("UPCOMING DEADLINES", 20, 284);
 
-            var pnlDeadlines = new Panel
+            var pnlDeadlines = new RoundedPanel
             {
                 Location = new Point(20, 304),
                 Size = new Size(416, 116),
@@ -216,7 +217,7 @@ namespace Level_Up_Mock
             // ── Quests panel (three soonest active quests) ──────────────────────────
             var lblQuestsHeading = MakeHeading("QUESTS", 448, 284);
 
-            var pnlQuests = new Panel
+            var pnlQuests = new RoundedPanel
             {
                 Location = new Point(448, 304),
                 Size = new Size(420, 116),
@@ -244,7 +245,7 @@ namespace Level_Up_Mock
                     TextAlign = ContentAlignment.MiddleRight,
                     Visible = false
                 };
-                _questCompleteButtons[i] = new Button
+                _questCompleteButtons[i] = new RoundedButton
                 {
                     Text = "Done",
                     Font = new Font("Segoe UI", 9f, FontStyle.Bold),
@@ -297,7 +298,7 @@ namespace Level_Up_Mock
                 Font = new Font("Segoe UI", 10f)
             };
 
-            btnOpenPastPapers = new Button
+            btnOpenPastPapers = new RoundedButton
             {
                 Text = "Open Past Papers  ↗",
                 Font = new Font("Segoe UI", 10f, FontStyle.Bold),
@@ -363,7 +364,7 @@ namespace Level_Up_Mock
 
 #if DEBUG
             // Debug-only button that opens the Dev Tools window.
-            var btnDev = new Button
+            var btnDev = new RoundedButton
             {
                 Text = "Dev",
                 Font = new Font("Segoe UI", 9f),
@@ -399,7 +400,7 @@ namespace Level_Up_Mock
         {
             const int width = 203, height = 56, gap = 12;
 
-            var btn = new Button
+            var btn = new RoundedButton
             {
                 Text = text,
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),

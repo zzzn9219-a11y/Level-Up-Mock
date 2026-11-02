@@ -219,7 +219,7 @@ namespace Level_Up_Mock
             bool equipped = owned && _equipped.TryGetValue(item.Category, out var id) && id == item.ItemID;
             bool affordable = _user.XP >= item.XPCost;
 
-            var card = new Panel
+            var card = new RoundedPanel
             {
                 Size = new Size(width, height),
                 BackColor = CARD_COLOUR,

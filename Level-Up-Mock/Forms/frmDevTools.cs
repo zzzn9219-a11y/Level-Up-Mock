@@ -60,7 +60,7 @@ namespace Level_Up_Mock
         // Adds one styled button that runs the given action when clicked.
         public void AddAction(string text, Action action)
         {
-            var btn = new Button
+            var btn = new RoundedButton
             {
                 Text = text,
                 Font = new Font("Segoe UI", 10f),

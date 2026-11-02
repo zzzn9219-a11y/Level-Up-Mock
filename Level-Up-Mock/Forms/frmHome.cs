@@ -221,7 +221,7 @@ namespace Level_Up_Mock
             int x = 0;
             foreach (var subject in _subjects)
             {
-                var chip = new Label
+                var chip = new ChipLabel
                 {
                     Text = subject.SubjectName,
                     AutoSize = false,

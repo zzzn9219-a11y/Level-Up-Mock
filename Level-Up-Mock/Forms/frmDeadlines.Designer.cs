@@ -41,7 +41,7 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
-            btnBack = new Button
+            btnBack = new RoundedButton
             {
                 Text = "← Back",
                 Font = new Font("Segoe UI", 9f),
@@ -54,7 +54,7 @@ namespace Level_Up_Mock
             btnBack.FlatAppearance.BorderSize = 0;
             btnBack.Click += btnBack_Click;
 
-            btnAddDeadline = new Button
+            btnAddDeadline = new RoundedButton
             {
                 Text = "+ Add Deadline",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),

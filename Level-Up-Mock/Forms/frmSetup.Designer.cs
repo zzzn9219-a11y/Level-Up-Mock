@@ -197,7 +197,7 @@ namespace Level_Up_Mock
             y += 52;
 
             // Next button
-            btnNext = new Button
+            btnNext = new RoundedButton
             {
                 Text = "Next →",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
@@ -301,7 +301,7 @@ namespace Level_Up_Mock
             pnlStage2.Controls.Add(lblSubjectError);
 
             // Back button.
-            btnBack = new Button
+            btnBack = new RoundedButton
             {
                 Text = "← Back",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
@@ -316,7 +316,7 @@ namespace Level_Up_Mock
             pnlStage2.Controls.Add(btnBack);
 
             // Save button.
-            btnSave = new Button
+            btnSave = new RoundedButton
             {
                 Text = "Save Profile",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),

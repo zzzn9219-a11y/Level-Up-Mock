@@ -66,7 +66,7 @@ namespace Level_Up_Mock
             };
 
             // ── New profile button ────────────────────────────────────────────────────
-            btnNewProfile = new Button
+            btnNewProfile = new RoundedButton
             {
                 Text = "+ New Profile",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),

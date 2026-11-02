@@ -78,7 +78,7 @@ namespace Level_Up_Mock
         private Panel BuildProfileCard(User user)
         {
             // Card container: dark navy background, rounded feel.
-            var card = new Panel
+            var card = new RoundedPanel
             {
                 Size = new Size(pnlCards.Width - Ui.S(pnlCards, 20), Ui.S(pnlCards, 80)),
                 BackColor = Color.FromArgb(20, 24, 40),    // Dark Navy
