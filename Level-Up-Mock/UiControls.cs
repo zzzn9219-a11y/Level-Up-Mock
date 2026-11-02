@@ -150,22 +150,26 @@ namespace Level_Up_Mock
             g.Clear(UiDraw.BackdropColour(this));
             g.SmoothingMode = SmoothingMode.AntiAlias;
 
+            // A transparent button takes the colour of whatever it sits on, so the
+            // gradient is built from that instead of from "transparent" (which turns white).
+            Color baseColour = BackColor.A == 255 ? BackColor : UiDraw.BackdropColour(this);
+
             // Pick the fill for the current state.
-            Color fill = BackColor;
+            Color fill = baseColour;
             if (!Enabled)
             {
                 // Disabled buttons sink towards the background so they look inactive.
-                fill = Blend(BackColor, UiDraw.BackdropColour(this), 0.55f);
+                fill = Blend(baseColour, UiDraw.BackdropColour(this), 0.55f);
             }
             else if (_pressed)
             {
                 fill = FlatAppearance.MouseDownBackColor != Color.Empty
-                    ? FlatAppearance.MouseDownBackColor : ControlPaint.Dark(BackColor, 0.1f);
+                    ? FlatAppearance.MouseDownBackColor : ControlPaint.Dark(baseColour, 0.1f);
             }
             else if (_hover)
             {
                 fill = FlatAppearance.MouseOverBackColor != Color.Empty
-                    ? FlatAppearance.MouseOverBackColor : ControlPaint.Light(BackColor, 0.2f);
+                    ? FlatAppearance.MouseOverBackColor : ControlPaint.Light(baseColour, 0.2f);
             }
 
             var rect = new RectangleF(0, 0, Width - 1, Height - 1);
