@@ -140,13 +140,37 @@ namespace Level_Up_Mock
             lblTimerDisplay.Text = FormatElapsedTime(elapsedMs);
         }
 
+        // Ticking "Mark topic complete" lets the user pick a quest difficulty.
+        private void chkTopicComplete_CheckedChanged(object? sender, EventArgs e)
+        {
+            cmbDifficulty.Enabled = chkTopicComplete.Checked;
+            if (!chkTopicComplete.Checked) lblTopicError.Visible = false;
+        }
+
         // "Save Session" button in the summary panel: writes the session to the database.
         private async void btnSaveSession_Click(object sender, EventArgs e)
         {
+            // Presence and length check first, so nothing is saved if the topic is missing.
+            if (chkTopicComplete.Checked && !Quest.IsValidTopic(txtTopic.Text))
+            {
+                lblTopicError.Text = $"Enter the topic you completed (max {Quest.MAX_TOPIC_LENGTH} characters).";
+                lblTopicError.Visible = true;
+                return;
+            }
+            lblTopicError.Visible = false;
+
             btnSaveSession.Enabled = false;
             btnSaveSession.Text = "Saving…";
 
             var selectedSubject = _subjects[cmbSubject.SelectedIndex];
+
+            // A topic typed without ticking the box makes no quest, so keep it in the note.
+            string topic = txtTopic.Text.Trim();
+            string notes = txtNotes.Text.Trim();
+            if (!chkTopicComplete.Checked && topic.Length > 0)
+            {
+                notes = notes.Length > 0 ? $"{notes}\nTopic: {topic}" : $"Topic: {topic}";
+            }
 
             // Use _netEndTime (not DateTime.Now) so Session.CalculateDuration() returns the
             // net study minutes — excluding paused intervals and time on this summary panel.
@@ -155,7 +179,7 @@ namespace Level_Up_Mock
                 selectedSubject.SubjectID,
                 _startTime,
                 _netEndTime,
-                txtNotes.Text.Trim());
+                notes);
 
             bool saved = await Task.Run(() => session.SaveToDatabase());
 
@@ -184,6 +208,18 @@ namespace Level_Up_Mock
             string xpMsg = $"+{session.XPAwarded} XP earned!";
             if (levelledUp)
                 xpMsg += $"\n🎉 Level Up! You are now Level {_user.Level}!";
+
+            // Algorithm 7.1: a ticked topic becomes a quest that unlocks in 7 days.
+            if (chkTopicComplete.Checked)
+            {
+                var quest = new Quest(_user.UserID, selectedSubject.SubjectID, topic,
+                    cmbDifficulty.SelectedItem?.ToString() ?? Quest.DIFFICULTY_MEDIUM);
+
+                if (quest.SaveToDatabase())
+                    xpMsg += $"\nQuest scheduled: \"{topic}\" unlocks on {quest.DueDate:dd MMM}.";
+                else
+                    xpMsg += "\nQuest could not be saved.";
+            }
 
             MessageBox.Show(xpMsg, "Session Saved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
@@ -257,6 +293,10 @@ namespace Level_Up_Mock
             lblSummarySubject.Text = $"Subject: {selectedSubject.SubjectName}";
 
             txtNotes.Text = string.Empty;
+            txtTopic.Text = string.Empty;
+            chkTopicComplete.Checked = false;
+            cmbDifficulty.SelectedItem = Quest.DIFFICULTY_MEDIUM;
+            lblTopicError.Visible = false;
             pnlSummary.Visible = true;
             pnlSummary.BringToFront();
 
