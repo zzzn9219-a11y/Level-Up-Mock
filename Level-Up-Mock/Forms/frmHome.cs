@@ -67,6 +67,17 @@ namespace Level_Up_Mock
             OpenChildForm(new frmDeadlines(_user!, _subjects));
         }
 
+#if DEBUG
+        // "Dev" button (Debug builds only): opens the Dev Tools window, then refreshes the
+        // home screen so any changes the tools made are shown.
+        private void btnDev_Click(object? sender, EventArgs e)
+        {
+            using var dev = new frmDevTools(_user!);
+            dev.ShowDialog(this);
+            LoadUserData();
+        }
+#endif
+
         // "Log Out" button — returns to account select.
         private void btnLogOut_Click(object sender, EventArgs e)
         {

@@ -309,6 +309,22 @@ namespace Level_Up_Mock
                 btnDeadlines, btnChallenge, btnSettings
             });
 
+#if DEBUG
+            // Debug-only button that opens the Dev Tools window.
+            var btnDev = new Button
+            {
+                Text = "Dev",
+                Font = new Font("Segoe UI", 9f),
+                ForeColor = Color.FromArgb(255, 200, 60),
+                Size = new Size(90, 30),
+                Location = new Point(680, 10)
+            };
+            Ui.StyleFlatButton(btnDev, Color.FromArgb(10, 14, 26), navy);
+            btnDev.FlatAppearance.BorderSize = 0;
+            btnDev.Click += btnDev_Click;
+            this.Controls.Add(btnDev);
+#endif
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }
