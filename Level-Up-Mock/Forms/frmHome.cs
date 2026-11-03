@@ -253,7 +253,7 @@ namespace Level_Up_Mock
 
             var equipped = StoreInventory.GetEquippedItems(_user.UserID);
             var old = picAvatar.Image;
-            picAvatar.Image = AvatarRenderer.Render(equipped, picAvatar.Size);
+            picAvatar.Image = AvatarRenderer.Render(equipped, picAvatar.Size, AvatarRenderer.GetSkinTone(_user));
             old?.Dispose();
         }
 

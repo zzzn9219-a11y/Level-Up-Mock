@@ -54,6 +54,13 @@ namespace Level_Up_Mock
             }
         }
 
+        // Edit Avatar: reopens the avatar screen. The home screen redraws on return.
+        private void btnEditAvatar_Click(object? sender, EventArgs e)
+        {
+            using var form = new frmAvatarSetup(_user, firstTime: false);
+            form.ShowDialog(this);
+        }
+
         // Delete Profile: the user has to type their username before anything is deleted.
         private void btnDeleteProfile_Click(object? sender, EventArgs e)
         {

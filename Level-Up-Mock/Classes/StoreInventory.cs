@@ -278,8 +278,14 @@ namespace Level_Up_Mock
         // avatar state described in the User table stays in step with the inventory.
         private static void SyncAvatarData(User user)
         {
-            string json = JsonSerializer.Serialize(GetEquippedItems(user.UserID));
-            user.UpdateAvatarData(json);
+            var data = GetEquippedItems(user.UserID);
+
+            // The skin tone shares this column, so it has to be written back or equipping an
+            // item would erase it.
+            string? tone = AvatarRenderer.GetSkinTone(user);
+            if (tone != null) data[AvatarRenderer.SKIN_TONE_KEY] = tone;
+
+            user.UpdateAvatarData(JsonSerializer.Serialize(data));
         }
 
         // Builds a StoreInventory object from the current row in an open reader.

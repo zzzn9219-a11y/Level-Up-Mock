@@ -53,6 +53,7 @@ namespace Level_Up_Mock
         private float _cornerRadius = Theme.CardRadius;
         private Color _borderColour = Theme.Border;
         private Color _accentColour = Color.Empty;
+        private float _borderWidth = 1f;
 
         // Corner radius in pixels at 96 DPI.
         public float CornerRadius
@@ -65,6 +66,13 @@ namespace Level_Up_Mock
         {
             get => _borderColour;
             set { _borderColour = value; Invalidate(); }
+        }
+
+        // Border thickness in pixels. A thicker border is used to mark a selected swatch.
+        public float BorderWidth
+        {
+            get => _borderWidth;
+            set { _borderWidth = value; Invalidate(); }
         }
 
         // When set, a coloured strip is drawn down the left edge (clipped to the corners).
@@ -115,7 +123,7 @@ namespace Level_Up_Mock
 
             if (_borderColour != Color.Empty)
             {
-                using var pen = new Pen(_borderColour, 1f);
+                using var pen = new Pen(_borderColour, _borderWidth);
                 g.DrawPath(pen, path);
             }
         }

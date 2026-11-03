@@ -76,6 +76,18 @@ namespace Level_Up_Mock
             btnSaveProfile.FlatAppearance.BorderSize = 0;
             btnSaveProfile.Click += btnSaveProfile_Click;
 
+            btnEditAvatar = new RoundedButton
+            {
+                Text = "Edit Avatar",
+                Font = new Font("Segoe UI", 10f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Size = new Size(140, 36),
+                Location = new Point(420, 92)
+            };
+            Ui.StyleFlatButton(btnEditAvatar, Theme.Border, Theme.SurfaceHover);
+            btnEditAvatar.FlatAppearance.BorderSize = 0;
+            btnEditAvatar.Click += btnEditAvatar_Click;
+
             lblProfileSaved = new Label
             {
                 Text = "Saved",
@@ -89,7 +101,7 @@ namespace Level_Up_Mock
             pnlProfile.Controls.AddRange(new Control[]
             {
                 lblName, txtName, lblNameError, lblUsername, txtUsername, lblUsernameError,
-                btnSaveProfile, lblProfileSaved
+                btnSaveProfile, btnEditAvatar, lblProfileSaved
             });
 
             // ── Subject colours ───────────────────────────────────────────────────────
@@ -200,6 +212,7 @@ namespace Level_Up_Mock
         private TextBox txtUsername = null!;
         private Label lblUsernameError = null!;
         private Button btnSaveProfile = null!;
+        private Button btnEditAvatar = null!;
         private Label lblProfileSaved = null!;
         private RoundedPanel pnlColours = null!;
         private Label lblColourError = null!;

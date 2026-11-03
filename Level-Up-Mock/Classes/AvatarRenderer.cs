@@ -23,6 +23,17 @@ namespace Level_Up_Mock
         private static readonly Color DEFAULT_HAIR = Color.FromArgb(70, 50, 38);
         private static readonly Color SHIRT = Color.FromArgb(30, 35, 60);
 
+        // The skin tones a user can choose. The key is what is saved in User.AvatarData.
+        public const string SKIN_TONE_KEY = "skintone";
+        public static readonly Dictionary<string, Color> SKIN_TONES = new()
+        {
+            { "light", Color.FromArgb(255, 224, 189) },
+            { "fair", Color.FromArgb(241, 194, 125) },
+            { "medium", Color.FromArgb(224, 172, 105) },
+            { "tan", Color.FromArgb(198, 134, 66) },
+            { "deep", Color.FromArgb(141, 85, 36) }
+        };
+
         // Loaded PNGs are cached so the store grid does not re-read the same file for every card.
         private static readonly Dictionary<string, Image?> _imageCache = new();
 
@@ -30,7 +41,7 @@ namespace Level_Up_Mock
 
         // Renders an avatar from a category → itemID dictionary (see StoreInventory.GetEquippedItems).
         // A category with no entry is simply skipped, apart from the basic body and default hair.
-        public static Bitmap Render(Dictionary<string, string> avatar, Size size)
+        public static Bitmap Render(Dictionary<string, string> avatar, Size size, string? skinTone = null)
         {
             var bmp = new Bitmap(Math.Max(size.Width, 1), Math.Max(size.Height, 1));
             using var g = Graphics.FromImage(bmp);
@@ -42,10 +53,16 @@ namespace Level_Up_Mock
             // Layer 1 — background.
             DrawLayer(g, bounds, avatar, StoreItem.CATEGORY_BACKGROUND, DrawBackgroundFallback);
 
-            // Layer 2 — body. Not a store item, so it has its own asset path.
-            if (!TryDrawImage(g, bounds, Path.Combine("Assets", "Avatars", "Body", "body_default.png")))
+            // Layer 2 — body. Not a store item, so it has its own asset path. A picture for the
+            // chosen skin tone is tried first, then the default picture, then the drawn body.
+            bool bodyDrawn = skinTone != null &&
+                TryDrawImage(g, bounds, Path.Combine("Assets", "Avatars", "Body", $"body_{skinTone}.png"));
+            if (!bodyDrawn)
+                bodyDrawn = TryDrawImage(g, bounds, Path.Combine("Assets", "Avatars", "Body", "body_default.png"));
+            if (!bodyDrawn)
             {
-                DrawScaled(g, bounds, DrawBodyFallback);
+                Color skin = GetSkinColour(skinTone);
+                DrawScaled(g, bounds, cg => DrawBodyFallback(cg, skin));
             }
 
             // Layer 3 — hair. With nothing equipped, the basic short hair from Version 1 is shown.
@@ -62,13 +79,58 @@ namespace Level_Up_Mock
 
         // Renders the user's current avatar with one item swapped in — used by the store
         // so each card previews the item on the user's own character.
-        public static Bitmap RenderWithItem(Dictionary<string, string> avatar, StoreItem item, Size size)
+        public static Bitmap RenderWithItem(Dictionary<string, string> avatar, StoreItem item, Size size, string? skinTone = null)
         {
             var preview = new Dictionary<string, string>(avatar)
             {
                 [item.Category] = item.ItemID
             };
-            return Render(preview, size);
+            return Render(preview, size, skinTone);
+        }
+
+        // ── Skin tone saved in AvatarData ─────────────────────────────────────────────
+
+        // The colour for a skin tone name. An unknown or missing tone gives the default skin.
+        public static Color GetSkinColour(string? skinTone)
+        {
+            return skinTone != null && SKIN_TONES.TryGetValue(skinTone, out Color colour)
+                ? colour
+                : DEFAULT_SKIN;
+        }
+
+        // Reads the chosen skin tone from the user's AvatarData JSON. Returns null if there is
+        // none, so users who never chose one (including every V2 profile) get the default.
+        public static string? GetSkinTone(User user)
+        {
+            var data = ParseAvatarData(user.AvatarData);
+            return data.TryGetValue(SKIN_TONE_KEY, out string? tone) && SKIN_TONES.ContainsKey(tone)
+                ? tone
+                : null;
+        }
+
+        // Saves the skin tone. The other keys already in AvatarData are kept.
+        public static void SetSkinTone(User user, string tone)
+        {
+            var data = ParseAvatarData(user.AvatarData);
+            data[SKIN_TONE_KEY] = tone;
+            user.UpdateAvatarData(System.Text.Json.JsonSerializer.Serialize(data));
+        }
+
+        // Turns the AvatarData JSON into a dictionary. Empty or damaged text gives an empty one.
+        public static Dictionary<string, string> ParseAvatarData(string json)
+        {
+            if (string.IsNullOrWhiteSpace(json)) return new Dictionary<string, string>();
+
+            try
+            {
+                return System.Text.Json.JsonSerializer.Deserialize<Dictionary<string, string>>(json)
+                       ?? new Dictionary<string, string>();
+            }
+            catch (System.Text.Json.JsonException ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"AvatarRenderer.ParseAvatarData error: {ex.Message}");
+                return new Dictionary<string, string>();
+            }
         }
 
         // Returns a faded, desaturated copy of an image (70% opacity) for items the user
@@ -182,9 +244,9 @@ namespace Level_Up_Mock
             }
         }
 
-        private static void DrawBodyFallback(Graphics g)
+        private static void DrawBodyFallback(Graphics g, Color skinColour)
         {
-            using var skin = new SolidBrush(DEFAULT_SKIN);
+            using var skin = new SolidBrush(skinColour);
             using var shirt = new SolidBrush(SHIRT);
             using var dark = new SolidBrush(Color.FromArgb(40, 30, 30));
 
