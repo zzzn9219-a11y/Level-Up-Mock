@@ -118,6 +118,16 @@ namespace Level_Up_Mock
             btnManageResults.FlatAppearance.BorderSize = 1;
             btnManageResults.Click += btnManageResults_Click;
 
+            // One line saying what the open tab shows. Text and position set in SwitchView.
+            lblTabInfo = new Label
+            {
+                Text = string.Empty,
+                Font = new Font("Segoe UI", 9.5f),
+                ForeColor = Theme.TextMuted,
+                Location = new Point(26, 112),
+                AutoSize = true
+            };
+
             // ── Graph, legend and summary ─────────────────────────────────────────────
             pnlGraph = new DoubleBufferedPanel
             {
@@ -158,9 +168,12 @@ namespace Level_Up_Mock
             {
                 lblTitle, btnBack, btnAddGrade,
                 btnTabHoursAll, btnTabHoursSubject, btnTabGrade, btnTabHistory,
-                lblRange, btnRange14, btnRange28, lblOptionSubject, cmbOptionSubject, btnManageResults,
+                lblRange, btnRange14, btnRange28, lblOptionSubject, cmbOptionSubject, btnManageResults, lblTabInfo,
                 pnlGraph, pnlLegend, lblSummary, pnlHistory
             });
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.TRACKER, 574, 19);
 
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -217,6 +230,7 @@ namespace Level_Up_Mock
         private Label lblOptionSubject = null!;
         private ComboBox cmbOptionSubject = null!;
         private Button btnManageResults = null!;
+        private Label lblTabInfo = null!;
         private DoubleBufferedPanel pnlGraph = null!;
         private Panel pnlLegend = null!;
         private Label lblSummary = null!;

@@ -116,6 +116,16 @@ namespace Level_Up_Mock
                 lblDate, dtpAssessmentDate, lblDateError
             });
 
+            // Hover text for the controls that need explaining.
+            Ui.AddTip(this, cmbSubject, "The subject this result is for.");
+            Ui.AddTip(this, txtAssessmentName, "A short name you will recognise on the graph, for example Mock 1.");
+            Ui.AddTip(this, nudScore, "Your score as a percentage, from 0 to 100.");
+            Ui.AddTip(this, cmbTargetGrade, "The grade you are aiming for. Drawn as a dashed line on the graph (A* 90%, A 80%, B 70%...).");
+            Ui.AddTip(this, dtpAssessmentDate, "The day you took the test. It cannot be in the future.");
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.GRADES, 426, 24);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

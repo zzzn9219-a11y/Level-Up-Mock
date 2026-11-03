@@ -53,7 +53,7 @@ namespace Level_Up_Mock
             btnBack.Click += btnBack_Click;
 
             // ── Profile ───────────────────────────────────────────────────────────────
-            var lblProfileHeading = MakeHeading("PROFILE", 30, 62);
+            var lblProfileHeading = MakeHeading("PROFILE   ·   your username is what others see on the leaderboard", 30, 62);
             var pnlProfile = new RoundedPanel { Location = new Point(30, 84), Size = new Size(580, 142), BackColor = Theme.Surface };
 
             var lblName = MakeFieldLabel("Name", 16, 10);
@@ -105,13 +105,13 @@ namespace Level_Up_Mock
             });
 
             // ── Subject colours ───────────────────────────────────────────────────────
-            var lblColoursHeading = MakeHeading("SUBJECT COLOURS", 30, 240);
+            var lblColoursHeading = MakeHeading("SUBJECT COLOURS   ·   used for chips, deadlines, quests and graphs", 30, 240);
             pnlColours = new RoundedPanel { Location = new Point(30, 262), Size = new Size(580, 206), BackColor = Theme.Surface };
 
             lblColourError = MakeErrorLabel(30, 472);
 
             // ── Danger zone ───────────────────────────────────────────────────────────
-            var lblDangerHeading = MakeHeading("DANGER ZONE", 30, 504);
+            var lblDangerHeading = MakeHeading("DANGER ZONE   ·   this cannot be undone", 30, 504);
             var pnlDanger = new RoundedPanel
             {
                 Location = new Point(30, 526),
@@ -151,6 +151,9 @@ namespace Level_Up_Mock
                 lblColoursHeading, pnlColours, lblColourError,
                 lblDangerHeading, pnlDanger
             });
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.SETTINGS, 486, 22);
 
             this.ResumeLayout(false);
             this.PerformLayout();

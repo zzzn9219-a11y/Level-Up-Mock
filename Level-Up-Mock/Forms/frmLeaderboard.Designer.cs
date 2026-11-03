@@ -40,7 +40,7 @@ namespace Level_Up_Mock
 
             var lblSubtitle = new Label
             {
-                Text = "Profiles on this device, ranked by total study time",
+                Text = "Profiles on this computer, ranked by total study time. Study with the timer to climb.",
                 Font = new Font("Segoe UI", 10f),
                 ForeColor = Color.FromArgb(160, 168, 192),
                 Location = new Point(28, 56),
@@ -80,6 +80,9 @@ namespace Level_Up_Mock
                 lblHeadRank, lblHeadName, lblHeadTime, lblHeadLevel,
                 pnlRows
             });
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.LEADERBOARD, 626, 22);
 
             this.ResumeLayout(false);
             this.PerformLayout();

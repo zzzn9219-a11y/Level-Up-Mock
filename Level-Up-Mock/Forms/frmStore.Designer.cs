@@ -178,6 +178,9 @@ namespace Level_Up_Mock
                 pnlItemGrid, pnlDetail
             });
 
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.STORE, 378, 16);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

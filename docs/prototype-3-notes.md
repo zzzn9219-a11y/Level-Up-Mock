@@ -89,11 +89,18 @@ The automated checks ran against a temporary database (data classes only, not th
 
 79 automated checks now pass (12 new ones for the streak, day totals, pace and quest removal).
 
+## In-app guide and explanations
+
+- **Guide window:** every screen has a "?" button (Home has "? Help"). It opens a guide with all 15 features listed on the left. Each page says what the feature is, where to find it, how it works step by step, and tips. All the text is in `HelpContent.cs`, so it can be changed in one place.
+- **Tooltips:** hover text on every Home button, the level, XP, rewards and streak, each subject chip, and the controls on the Timer, Challenge, Add Grade and Add Deadline screens.
+- **On-screen descriptions:** a line under each Tracker tab saying what it shows, subtitles on Deadlines, Timer and Leaderboard, and a short explanation next to each Settings heading.
+
 ## Still to test on Windows
 
 - Every new screen at 100%, 125% and 150% display scaling.
 - Hover tooltips on the graphs and on home quest rows.
 - Close the timer mid-session: it asks first.
+- Open the guide from every screen; check the text fits and scrolls at 150%.
 - Hover, pressed and Tab focus on buttons.
 - Graphs: with seeded test data (Dev Tools) and with a brand new user.
 - The Dev button is absent in a Release build.

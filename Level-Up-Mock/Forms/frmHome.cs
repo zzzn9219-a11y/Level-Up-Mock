@@ -350,6 +350,7 @@ namespace Level_Up_Mock
                 chip.Size = new Size(width, pnlSubjectChips.Height);
                 chip.Location = new Point(x, 0);
                 pnlSubjectChips.Controls.Add(chip);
+                Ui.AddTip(this, chip, $"{subject.SubjectName} ({subject.ExamBoard}). This colour marks {subject.SubjectName} across the app.");
                 x += width + Ui.S(this, 8);
             }
         }

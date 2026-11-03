@@ -57,7 +57,7 @@ namespace Level_Up_Mock
                 Font = new Font("Segoe UI", 10f, FontStyle.Bold),
                 ForeColor = Color.FromArgb(255, 215, 0),
                 Location = new Point(170, 28),
-                Size = new Size(520, 24),
+                Size = new Size(480, 24),
                 AutoEllipsis = true
             };
 
@@ -88,6 +88,9 @@ namespace Level_Up_Mock
             tmrListCountdown.Tick += tmrListCountdown_Tick;
 
             this.Controls.AddRange(new Control[] { lblTitle, lblStats, lblSubtitle, btnBack, pnlList });
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.QUESTS, 666, 22);
 
             this.ResumeLayout(false);
             this.PerformLayout();

@@ -76,6 +76,14 @@ namespace Level_Up_Mock
                 lblTitle, btnBack, lblBalance, pnlSetup, pnlActive, pnlResult
             });
 
+            // Hover text for the controls that need explaining.
+            Ui.AddTip(this, nudGoalHours, "How many hours you want to study in the next 7 days (1 to 80).");
+            Ui.AddTip(this, nudStake, "Rewards to put at stake. Taken now; you get double back if you meet the goal, half back if not.");
+            Ui.AddTip(this, btnStartChallenge, "Start the 7 day challenge. The stake is taken straight away.");
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.CHALLENGE, 546, 22);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

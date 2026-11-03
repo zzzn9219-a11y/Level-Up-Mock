@@ -83,6 +83,14 @@ namespace Level_Up_Mock
                 lblSubject, cmbSubject
             });
 
+            // Hover text for the controls that need explaining.
+            Ui.AddTip(this, txtDeadlineName, "What is due, for example Physics Mock or UCAS form.");
+            Ui.AddTip(this, dtpDeadlineDate, "Must be after today. The countdown runs to the start of this day.");
+            Ui.AddTip(this, cmbSubject, "Optional. Shows the deadline in that subject's colour.");
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.DEADLINES, 426, 24);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

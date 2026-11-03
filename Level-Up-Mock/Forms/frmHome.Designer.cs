@@ -358,6 +358,24 @@ namespace Level_Up_Mock
             btnQuests = MakeNavButton("📜  Quests", 3, 1, navy);
             btnQuests.Click += btnQuests_Click;
 
+            // ── Hover text explaining each part of the home screen ────────────────────
+            Ui.AddTip(this, btnTimer, "Time a study session. Every saved minute earns XP.");
+            Ui.AddTip(this, btnStore, "Spend XP on hair, accessories and backgrounds for your avatar.");
+            Ui.AddTip(this, btnTracker, "Graphs of your study hours and grades, plus your session history.");
+            Ui.AddTip(this, btnLeaderboard, "See how your total study time ranks against other profiles on this computer.");
+            Ui.AddTip(this, btnDeadlines, "Add and manage countdowns to your exams, mocks and hand-ins.");
+            Ui.AddTip(this, btnChallenge, "Set a study goal for the week and stake rewards on it.");
+            Ui.AddTip(this, btnSettings, "Change your name, username, subject colours or avatar.");
+            Ui.AddTip(this, btnQuests, "Quests remind you to revisit a topic a week after you finished it.");
+            Ui.AddTip(this, lblLevel, "Your level goes up as you earn XP. The bar shows how close the next level is.");
+            Ui.AddTip(this, lblXP, "XP: 1 per minute studied, plus a 50% bonus for sessions over 60 minutes.");
+            Ui.AddTip(this, lblRewards, "Rewards: earned from quests and challenges, and staked on challenges.");
+            Ui.AddTip(this, lblStreak, "Days in a row you have studied. Study today to keep it going.");
+            Ui.AddTip(this, pnlSubjectChips, "Your subjects. Each colour is used for that subject across the app.");
+            Ui.AddTip(this, cmbPastPaperSubject, "Choose a subject, then open its exam board's past paper page.");
+            Ui.AddTip(this, lblNoQuests, "Tick 'Mark topic complete' after a study session to create a quest.");
+            Ui.AddTip(this, lblNoDeadlines, "Use the Deadlines button below to add one.");
+
             // ── Assemble form ─────────────────────────────────────────────────────────
             this.Controls.AddRange(new Control[]
             {
@@ -387,6 +405,9 @@ namespace Level_Up_Mock
             btnDev.Click += btnDev_Click;
             this.Controls.Add(btnDev);
 #endif
+
+            // Opens the full guide to every feature.
+            Ui.AddHelpButton(this, HelpContent.HOME, 582, 10, "?  Help", 90);
 
             this.ResumeLayout(false);
             this.PerformLayout();

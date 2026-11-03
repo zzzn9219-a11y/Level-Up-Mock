@@ -375,6 +375,7 @@ namespace Level_Up_Mock
             lblRange.Visible = btnRange14.Visible = btnRange28.Visible = showRange;
             lblOptionSubject.Visible = cmbOptionSubject.Visible = showSubject;
             btnManageResults.Visible = view == VIEW_GRADE && _subjects.Count > 0;
+            ShowTabInfo(view);
             HideGraphTip();
 
             foreach (var btn in new[] { btnRange14, btnRange28 })
@@ -400,6 +401,20 @@ namespace Level_Up_Mock
                 BuildLegendAndSummary(view);
                 pnlGraph.Invalidate();
             }
+        }
+
+        // Explains the open tab in one line, placed just after that tab's own controls.
+        private void ShowTabInfo(string view)
+        {
+            (string text, int x) = view switch
+            {
+                VIEW_HOURS_ALL => ("Your total study hours for each of the last 8 weeks. Hover over a point to see its value.", 26),
+                VIEW_HOURS_SUBJECT => ("One line per subject, per day, in your subject colours.", 262),
+                VIEW_GRADE => ("Dashed line = your target grade.", 480),
+                _ => ("Your sessions, newest first, with the notes you added.", 330)
+            };
+            lblTabInfo.Text = text;
+            lblTabInfo.Location = Ui.P(this, x, 112);
         }
 
         // Fills the subject dropdown for the current tab. The history tab also gets an

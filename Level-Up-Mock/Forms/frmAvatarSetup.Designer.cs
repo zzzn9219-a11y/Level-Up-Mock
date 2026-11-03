@@ -110,6 +110,9 @@ namespace Level_Up_Mock
                 lblTitle, lblTone, pnlSwatches, lblHint, pnlPreviewCard, btnConfirm, btnCancel
             });
 
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.AVATAR, 586, 24);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

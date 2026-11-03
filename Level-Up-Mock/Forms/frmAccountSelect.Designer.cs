@@ -82,6 +82,9 @@ namespace Level_Up_Mock
             // ── Add controls to form ──────────────────────────────────────────────────
             this.Controls.AddRange(new Control[] { lblTitle, lblSubHeading, pnlCards, btnNewProfile });
 
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.PROFILES, 636, 16);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

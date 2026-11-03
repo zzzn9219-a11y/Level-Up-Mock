@@ -67,6 +67,15 @@ namespace Level_Up_Mock
             btnAddDeadline.FlatAppearance.BorderSize = 0;
             btnAddDeadline.Click += btnAddDeadline_Click;
 
+            var lblSubtitle = new Label
+            {
+                Text = "Countdowns to your exams, mocks and hand-ins. Home shows the 3 soonest.",
+                Font = new Font("Segoe UI", 9.5f),
+                ForeColor = Color.FromArgb(160, 168, 192),
+                Location = new Point(212, 78),
+                AutoSize = true
+            };
+
             // Scrollable list of deadline rows (built in RenderDeadlineList).
             pnlList = new Panel
             {
@@ -80,7 +89,10 @@ namespace Level_Up_Mock
             tmrListCountdown = new System.Windows.Forms.Timer(components) { Interval = 1000 };
             tmrListCountdown.Tick += tmrListCountdown_Tick;
 
-            this.Controls.AddRange(new Control[] { lblTitle, btnBack, btnAddDeadline, pnlList });
+            this.Controls.AddRange(new Control[] { lblTitle, lblSubtitle, btnBack, btnAddDeadline, pnlList });
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.DEADLINES, 666, 22);
 
             this.ResumeLayout(false);
             this.PerformLayout();

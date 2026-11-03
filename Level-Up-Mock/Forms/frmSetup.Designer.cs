@@ -70,6 +70,9 @@ namespace Level_Up_Mock
             // ── Add top-level controls ────────────────────────────────────────────────
             this.Controls.AddRange(new Control[] { lblHeading, lblStepIndicator, pnlStage1, pnlStage2 });
 
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.PROFILES, 560, 22);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }
