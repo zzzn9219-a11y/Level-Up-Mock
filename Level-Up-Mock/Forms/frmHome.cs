@@ -91,6 +91,12 @@ namespace Level_Up_Mock
         }
 #endif
 
+        // "Tracker" navigation button.
+        private void btnTracker_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmTracker(_user!, _subjects));
+        }
+
         // "Quests" navigation button.
         private void btnQuests_Click(object? sender, EventArgs e)
         {

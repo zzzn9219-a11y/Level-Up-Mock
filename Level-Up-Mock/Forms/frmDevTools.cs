@@ -58,13 +58,6 @@ namespace Level_Up_Mock
             AddAction("Quests: unlock pending now", () => ShowCount(DevTools.UnlockPendingQuests(_user.UserID)));
             AddAction("Quests: expire active in 1 min", () => ShowCount(DevTools.ExpireActiveQuestsSoon(_user.UserID)));
             AddAction("Quests: expire active now", () => ShowCount(DevTools.ExpireActiveQuestsNow(_user.UserID)));
-
-            // Temporary: opens the Add Grade form until the Tracker has its own button (Phase 15).
-            AddAction("Open Add Grade form", () =>
-            {
-                using var form = new frmAddGrade(_user, Subject.LoadSubjectsForUser(_user.UserID));
-                form.ShowDialog(this);
-            });
         }
 
         // ── Private helpers ───────────────────────────────────────────────────────────
