@@ -338,7 +338,7 @@ namespace Level_Up_Mock
             var btnDeadlines = MakeNavButton("📅  Deadlines", 0, 1, navy);
             btnDeadlines.Click += btnDeadlines_Click;
 
-            // Placeholder buttons for features coming in Version 3.
+            // Version 3 features.
             btnTracker = MakeNavButton("📊  Tracker", 2, 0, navy);
             btnTracker.Click += btnTracker_Click;
             btnChallenge = MakeNavButton("🎯  Challenge", 1, 1, navy);

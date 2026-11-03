@@ -6,6 +6,7 @@ namespace Level_Up_Mock
     // Shows the user's profile summary (avatar, level, XP), the three soonest deadline
     // countdowns, the past paper links, and navigation buttons to every other feature.
     // Version 2 adds the avatar render, deadlines, past papers, store and leaderboard.
+    // Version 3 adds quests, the study tracker, the weekly challenge and settings.
     public partial class frmHome : Form
     {
         // ── Constants ─────────────────────────────────────────────────────────────────
