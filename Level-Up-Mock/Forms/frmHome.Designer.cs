@@ -343,8 +343,8 @@ namespace Level_Up_Mock
             btnTracker.Click += btnTracker_Click;
             btnChallenge = MakeNavButton("🎯  Challenge", 1, 1, navy);
             btnChallenge.Click += btnChallenge_Click;
-            var btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
-            btnSettings.Enabled = false;
+            btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
+            btnSettings.Click += btnSettings_Click;
             btnQuests = MakeNavButton("📜  Quests", 3, 1, navy);
             btnQuests.Click += btnQuests_Click;
 
@@ -435,6 +435,7 @@ namespace Level_Up_Mock
         private readonly Button[] _questCompleteButtons = new Button[3];
         private Button btnQuests = null!;
         private Button btnTracker = null!;
+        private Button btnSettings = null!;
         private Button btnChallenge = null!;
         private Label lblNoQuests = null!;
         private Label lblQuestsUpcoming = null!;

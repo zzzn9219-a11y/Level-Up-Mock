@@ -97,6 +97,12 @@ namespace Level_Up_Mock
             OpenChildForm(new frmChallenge(_user!));
         }
 
+        // "Settings" navigation button.
+        private void btnSettings_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmSettings(_user!, _subjects));
+        }
+
         // "Tracker" navigation button.
         private void btnTracker_Click(object? sender, EventArgs e)
         {
@@ -203,7 +209,9 @@ namespace Level_Up_Mock
             child.FormClosed += (s, args) =>
             {
                 LoadUserData();
-                this.Show();
+
+                // LoadUserData closes this form if the profile was deleted in Settings.
+                if (!this.IsDisposed) this.Show();
             };
             child.Show();
             this.Hide();
