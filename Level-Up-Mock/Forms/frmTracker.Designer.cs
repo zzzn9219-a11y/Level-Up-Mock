@@ -92,7 +92,7 @@ namespace Level_Up_Mock
                 Location = new Point(26, 112),
                 AutoSize = true
             };
-            cmbOptionSubject = new ComboBox
+            cmbOptionSubject = new ThemedComboBox
             {
                 Location = new Point(92, 108),
                 Size = new Size(220, 28),

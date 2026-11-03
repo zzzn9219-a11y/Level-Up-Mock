@@ -95,12 +95,24 @@ The automated checks ran against a temporary database (data classes only, not th
 - **Tooltips:** hover text on every Home button, the level, XP, rewards and streak, each subject chip, and the controls on the Timer, Challenge, Add Grade and Add Deadline screens.
 - **On-screen descriptions:** a line under each Tracker tab saying what it shows, subtitles on Deadlines, Timer and Leaderboard, and a short explanation next to each Settings heading.
 
+## Themed input fields
+
+Windows draws text boxes, dropdowns, date pickers and number boxes in its own light style, which clashed with the dark theme (white date boxes, white dropdown arrows and spinner buttons, a bright blue box on empty dropdowns).
+
+- **Text boxes and number boxes** sit inside a rounded frame (`InputFrame`). The border lights up on hover and turns blue while typing. Clicking anywhere in the frame puts the cursor in the field.
+- **Number boxes** (score, challenge goal and stake) get themed minus and plus buttons instead of the white arrows.
+- **Dropdowns** (`ThemedComboBox`) are drawn in the dark theme with a chevron, dark list items and a blue highlight. An empty dropdown shows a grey hint such as "Choose a subject".
+- **Date pickers** (`ThemedDatePicker`) are dark with a calendar icon, and clicking anywhere on them opens the calendar.
+- **Tick boxes** use the flat themed style.
+- All of it is in `Inputs.cs` and `Ui.ThemeInputs`. The calendar that pops up is still drawn by Windows.
+
 ## Still to test on Windows
 
 - Every new screen at 100%, 125% and 150% display scaling.
 - Hover tooltips on the graphs and on home quest rows.
 - Close the timer mid-session: it asks first.
 - Open the guide from every screen; check the text fits and scrolls at 150%.
+- Every input field: typing, tabbing between fields, hover and blue focus border, dropdown lists, the calendar, and the minus and plus buttons.
 - Hover, pressed and Tab focus on buttons.
 - Graphs: with seeded test data (Dev Tools) and with a brand new user.
 - The Dev button is absent in a Release build.

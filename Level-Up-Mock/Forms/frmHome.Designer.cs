@@ -297,8 +297,9 @@ namespace Level_Up_Mock
             // ── Past papers strip (one line to save height) ──────────────────────────
             var lblPastPapersHeading = MakeHeading("PAST PAPERS", 20, 438);
 
-            cmbPastPaperSubject = new ComboBox
+            cmbPastPaperSubject = new ThemedComboBox
             {
+                Placeholder = "Choose a subject",
                 Location = new Point(130, 432),
                 Size = new Size(300, 28),
                 DropDownStyle = ComboBoxStyle.DropDownList,

@@ -84,6 +84,9 @@ namespace Level_Up_Mock
             // "?" opens the guide on this screen's page.
             Ui.AddHelpButton(this, HelpContent.CHALLENGE, 546, 22);
 
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }

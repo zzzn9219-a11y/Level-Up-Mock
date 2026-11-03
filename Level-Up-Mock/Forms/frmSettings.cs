@@ -264,6 +264,7 @@ namespace Level_Up_Mock
 
             dialog.Controls.AddRange(new Control[] { lblPrompt, txtConfirm, btnDelete, btnCancel });
             dialog.CancelButton = btnCancel;
+            Ui.ThemeInputs(dialog);
 
             return dialog.ShowDialog(this) == DialogResult.OK && txtConfirm.Text == _user.Username;
         }

@@ -58,11 +58,11 @@ namespace Level_Up_Mock
 
             var lblName = MakeFieldLabel("Name", 16, 10);
             txtName = MakeTextBox(16, 32, 260);
-            lblNameError = MakeErrorLabel(16, 62);
+            lblNameError = MakeErrorLabel(16, 68);
 
             var lblUsername = MakeFieldLabel("Username  (min. 5 characters)", 300, 10);
             txtUsername = MakeTextBox(300, 32, 260);
-            lblUsernameError = MakeErrorLabel(300, 62);
+            lblUsernameError = MakeErrorLabel(300, 68);
 
             btnSaveProfile = new RoundedButton
             {
@@ -154,6 +154,9 @@ namespace Level_Up_Mock
 
             // "?" opens the guide on this screen's page.
             Ui.AddHelpButton(this, HelpContent.SETTINGS, 486, 22);
+
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
 
             this.ResumeLayout(false);
             this.PerformLayout();

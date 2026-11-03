@@ -35,8 +35,9 @@ namespace Level_Up_Mock
 
             // ── Subject (required) ────────────────────────────────────────────────────
             var lblSubject = MakeFieldLabel("Subject", 30, 76);
-            cmbSubject = new ComboBox
+            cmbSubject = new ThemedComboBox
             {
+                Placeholder = "Choose a subject",
                 Location = new Point(30, 100),
                 Size = new Size(420, 32),
                 DropDownStyle = ComboBoxStyle.DropDownList,
@@ -77,7 +78,7 @@ namespace Level_Up_Mock
             };
 
             var lblTarget = MakeFieldLabel("Target Grade", 230, 248);
-            cmbTargetGrade = new ComboBox
+            cmbTargetGrade = new ThemedComboBox
             {
                 Location = new Point(230, 272),
                 Size = new Size(160, 32),
@@ -92,7 +93,7 @@ namespace Level_Up_Mock
 
             // ── Assessment date ───────────────────────────────────────────────────────
             var lblDate = MakeFieldLabel("Date Taken", 30, 326);
-            dtpAssessmentDate = new DateTimePicker
+            dtpAssessmentDate = new ThemedDatePicker
             {
                 Location = new Point(30, 350),
                 Size = new Size(260, 32),
@@ -125,6 +126,9 @@ namespace Level_Up_Mock
 
             // "?" opens the guide on this screen's page.
             Ui.AddHelpButton(this, HelpContent.GRADES, 426, 24);
+
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
 
             this.ResumeLayout(false);
             this.PerformLayout();

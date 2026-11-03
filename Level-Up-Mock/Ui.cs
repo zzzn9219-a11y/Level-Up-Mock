@@ -28,6 +28,99 @@ namespace Level_Up_Mock
             return new Point(S(control, x), S(control, y));
         }
 
+        // Gives every text box, number box and tick box under "root" the themed look. Call it
+        // at the end of InitializeComponent (after the controls are added), so the new frames
+        // are laid out in 96 DPI design pixels and scaled with the rest of the form.
+        // Dropdowns and date pickers are themed by creating ThemedComboBox / ThemedDatePicker.
+        public static void ThemeInputs(Control root)
+        {
+            var inputs = new List<Control>();
+            Collect(root, inputs);
+
+            foreach (var input in inputs)
+            {
+                if (input is CheckBox check)
+                {
+                    StyleCheckBox(check);
+                }
+                else
+                {
+                    WrapInFrame(input);
+                }
+            }
+        }
+
+        private static void Collect(Control parent, List<Control> found)
+        {
+            foreach (Control child in parent.Controls)
+            {
+                // The text part of a number box is handled with the number box itself.
+                if (child is UpDownBase || child is InputFrame)
+                {
+                    if (child is NumericUpDown) found.Add(child);
+                    continue;
+                }
+                if (child is TextBox || child is CheckBox) found.Add(child);
+                else Collect(child, found);
+            }
+        }
+
+        // Moves the field into an InputFrame that takes its place, size and tab order.
+        private static void WrapInFrame(Control input)
+        {
+            var parent = input.Parent;
+            if (parent == null) return;
+
+            bool multiline = input is TextBox { Multiline: true };
+            int index = parent.Controls.GetChildIndex(input);
+
+            var frame = new InputFrame(input)
+            {
+                Location = input.Location,
+                Size = new Size(input.Width, multiline ? input.Height : FieldHeight(input.Font)),
+                TabIndex = input.TabIndex,
+                Anchor = input.Anchor
+            };
+
+            parent.Controls.Add(frame);
+            parent.Controls.SetChildIndex(frame, index);
+
+            if (input is TextBox text)
+            {
+                text.BorderStyle = BorderStyle.None;
+                text.ForeColor = Color.White;
+            }
+            else if (input is NumericUpDown number)
+            {
+                number.BorderStyle = BorderStyle.None;
+                number.ForeColor = Color.White;
+                // Hide the white Windows arrows; the frame adds themed - and + buttons.
+                if (number.Controls.Count > 0) number.Controls[0].Visible = false;
+            }
+
+            frame.Controls.Add(input);
+            frame.Attach();
+        }
+
+        // Height of a one-line field for a font, in 96 DPI design pixels: the text height plus
+        // room above and below. Worked out from the font size, not its current pixel height,
+        // because the form has not been scaled for the screen yet when this runs.
+        private static int FieldHeight(Font font)
+        {
+            float textHeight = font.SizeInPoints * 96f / 72f * 1.36f;
+            return (int)Math.Round(textHeight) + 12;
+        }
+
+        private static void StyleCheckBox(CheckBox check)
+        {
+            check.FlatStyle = FlatStyle.Flat;
+            check.FlatAppearance.BorderColor = Theme.BlueLight;
+            check.FlatAppearance.CheckedBackColor = Theme.Blue;
+            check.FlatAppearance.MouseOverBackColor = Theme.SurfaceHover;
+            check.ForeColor = Color.White;
+            check.Cursor = Cursors.Hand;
+        }
+
         // Adds the small "?" button that opens the guide on this screen's page. Called inside
         // a form's InitializeComponent, so the position is in 96 DPI design pixels and is
         // scaled with the rest of the form.

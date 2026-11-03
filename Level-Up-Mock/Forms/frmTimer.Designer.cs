@@ -52,8 +52,9 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
-            cmbSubject = new ComboBox
+            cmbSubject = new ThemedComboBox
             {
+                Placeholder = "Choose a subject to study",
                 Location = new Point(30, 94),
                 Size = new Size(340, 36),
                 DropDownStyle = ComboBoxStyle.DropDownList,
@@ -262,7 +263,7 @@ namespace Level_Up_Mock
             };
             chkTopicComplete.CheckedChanged += chkTopicComplete_CheckedChanged;
 
-            cmbDifficulty = new ComboBox
+            cmbDifficulty = new ThemedComboBox
             {
                 Location = new Point(16, 180),
                 Size = new Size(130, 28),
@@ -329,6 +330,9 @@ namespace Level_Up_Mock
 
             // "?" opens the guide on this screen's page.
             Ui.AddHelpButton(this, HelpContent.TIMER, 630, 24);
+
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
 
             this.ResumeLayout(false);
             this.PerformLayout();
