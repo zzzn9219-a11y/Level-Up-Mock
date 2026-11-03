@@ -10,6 +10,15 @@ namespace Level_Up_Mock
         public List<double> Values { get; set; } = new();
     }
 
+    // Where one data point was drawn, so the form can show its value when the mouse is over it.
+    public class GraphPoint
+    {
+        public PointF Location { get; set; }
+        public string SeriesName { get; set; } = string.Empty;
+        public int Index { get; set; }
+        public double Value { get; set; }
+    }
+
     // Draws every tracker graph with GDI+ (Algorithm 8.2). The built-in Chart control is hard
     // to theme for the dark look, so one hand-drawn renderer keeps all three graphs consistent.
     public static class LineGraphRenderer
@@ -22,7 +31,8 @@ namespace Level_Up_Mock
 
         private const int GRID_LINES = 5;
 
-        public static void Draw(Graphics g, Rectangle bounds, List<string> xLabels,
+        // Returns the position of every point drawn (empty when there was nothing to plot).
+        public static List<GraphPoint> Draw(Graphics g, Rectangle bounds, List<string> xLabels,
                                 List<GraphSeries> series, string yAxisTitle,
                                 double? targetLine = null, double? fixedYMax = null,
                                 string emptyMessage = "No data yet")
@@ -39,8 +49,13 @@ namespace Level_Up_Mock
             using (var background = new SolidBrush(Theme.Surface))
                 g.FillRectangle(background, 0, 0, width, height);
 
-            // Nothing to plot: say so instead of drawing empty axes.
-            bool hasData = series.Any(s => s.Values.Any(v => v > 0));
+            var points = new List<GraphPoint>();
+
+            // Nothing to plot: say so instead of drawing empty axes. For hours, a line of
+            // zeros counts as nothing. For grades (fixed scale) a real score of 0% still counts.
+            bool hasData = fixedYMax.HasValue
+                ? series.Any(s => s.Values.Count > 0)
+                : series.Any(s => s.Values.Any(v => v > 0));
             if (!hasData)
             {
                 using var font = new Font("Segoe UI", 12f);
@@ -48,7 +63,7 @@ namespace Level_Up_Mock
                 var format = new StringFormat { Alignment = StringAlignment.Center, LineAlignment = StringAlignment.Center };
                 g.DrawString(emptyMessage, font, brush, new RectangleF(0, 0, width, height), format);
                 g.Restore(state);
-                return;
+                return points;
             }
 
             var plot = new RectangleF(
@@ -76,10 +91,17 @@ namespace Level_Up_Mock
 
             foreach (var line in series)
             {
-                DrawSeries(g, plot, line, xLabels.Count, yMax, scale);
+                DrawSeries(g, plot, line, xLabels.Count, yMax, scale, points);
             }
 
             g.Restore(state);
+
+            // Points were worked out inside the moved drawing area, so shift them back.
+            foreach (var p in points)
+            {
+                p.Location = new PointF(p.Location.X + bounds.X, p.Location.Y + bounds.Y);
+            }
+            return points;
         }
 
         // ── Axis helpers ──────────────────────────────────────────────────────────────
@@ -147,7 +169,7 @@ namespace Level_Up_Mock
         // ── Data drawing ──────────────────────────────────────────────────────────────
 
         private static void DrawSeries(Graphics g, RectangleF plot, GraphSeries series,
-                                       int labelCount, double yMax, float scale)
+                                       int labelCount, double yMax, float scale, List<GraphPoint> hits)
         {
             int count = Math.Min(series.Values.Count, labelCount);
             if (count == 0) return;
@@ -156,6 +178,13 @@ namespace Level_Up_Mock
             for (int i = 0; i < count; i++)
             {
                 points[i] = new PointF(GetX(plot, i, labelCount), GetY(plot, series.Values[i], yMax));
+                hits.Add(new GraphPoint
+                {
+                    Location = points[i],
+                    SeriesName = series.Name,
+                    Index = i,
+                    Value = series.Values[i]
+                });
             }
 
             // Two or more points make a line. A single point is only a dot.

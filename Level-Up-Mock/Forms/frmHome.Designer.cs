@@ -124,6 +124,16 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
+            // Study streak and today's time, so the user sees their habit at a glance.
+            lblStreak = new Label
+            {
+                Text = string.Empty,
+                Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(255, 150, 40),
+                Location = new Point(580, 86),
+                AutoSize = true
+            };
+
             // XP bar background track.
             var pnlXPBarTrack = new RoundedPanel
             {
@@ -154,7 +164,7 @@ namespace Level_Up_Mock
 
             pnlProfile.Controls.AddRange(new Control[]
             {
-                picAvatar, lblWelcome, lblUsername, lblLevel, lblXP, lblRewards,
+                picAvatar, lblWelcome, lblUsername, lblLevel, lblXP, lblRewards, lblStreak,
                 pnlXPBarTrack, lblXPProgress
             });
 
@@ -421,6 +431,7 @@ namespace Level_Up_Mock
         private Label lblLevel = null!;
         private Label lblXP = null!;
         private Label lblRewards = null!;
+        private Label lblStreak = null!;
         private Panel pnlXPBarFill = null!;
         private Label lblXPProgress = null!;
         private Panel pnlSubjectChips = null!;

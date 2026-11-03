@@ -95,6 +95,49 @@ namespace Level_Up_Mock
                 pair => pair.Value.Select(m => Math.Round(m / 60.0, 2)).ToList());
         }
 
+        // ── Streaks and day totals ────────────────────────────────────────────────────
+
+        // Counts the days in a row with at least one session, ending today. If nothing has
+        // been logged yet today, the streak is still alive when yesterday counts, so a user
+        // is not told their streak is 0 first thing in the morning.
+        public static int GetCurrentStreak(List<Session> sessions, DateTime today)
+        {
+            var studiedDays = new HashSet<DateTime>(
+                sessions.Where(s => s.DurationMinutes > 0).Select(s => s.StartTime.Date));
+
+            DateTime day = today.Date;
+            if (!studiedDays.Contains(day)) day = day.AddDays(-1);
+
+            int streak = 0;
+            while (studiedDays.Contains(day))
+            {
+                streak++;
+                day = day.AddDays(-1);
+            }
+            return streak;
+        }
+
+        // Total minutes studied on one day.
+        public static int GetMinutesOnDay(List<Session> sessions, DateTime day)
+        {
+            return sessions.Where(s => s.StartTime.Date == day.Date).Sum(s => s.DurationMinutes);
+        }
+
+        // The highest weekly total in the weekly data, in hours.
+        public static double GetBestWeekHours(Dictionary<int, Dictionary<string, int>> weekly)
+        {
+            var totals = GetWeeklyTotalHours(weekly);
+            return totals.Count == 0 ? 0 : totals.Max();
+        }
+
+        // Turns minutes into short text: "45m", "2h", "1h 30m".
+        public static string FormatMinutes(int minutes)
+        {
+            if (minutes < 60) return $"{minutes}m";
+            int h = minutes / 60, m = minutes % 60;
+            return m == 0 ? $"{h}h" : $"{h}h {m}m";
+        }
+
         // ── Axis labels ───────────────────────────────────────────────────────────────
 
         // The Monday of each week, e.g. "06 Oct", oldest first.

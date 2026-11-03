@@ -50,6 +50,13 @@ namespace Level_Up_Mock
         // True while the dropdown is being refilled, so that does not count as a user choice.
         private bool _fillingOptions;
 
+        // Where each point of the current graph was drawn, and the x labels it used, so the
+        // value can be shown in a tooltip when the mouse is over a point.
+        private List<GraphPoint> _hitPoints = new();
+        private List<string> _currentLabels = new();
+        private GraphPoint? _hoveredPoint;
+        private readonly ToolTip _graphTip = new() { InitialDelay = 0, ReshowDelay = 0 };
+
         // ── Constructor ───────────────────────────────────────────────────────────────
 
         public frmTracker(User user, List<Subject> subjects)
@@ -57,6 +64,10 @@ namespace Level_Up_Mock
             InitializeComponent();
             _user = user;
             _subjects = subjects;
+
+            pnlGraph.MouseMove += pnlGraph_MouseMove;
+            pnlGraph.MouseLeave += (s, e) => HideGraphTip();
+            this.FormClosed += (s, e) => _graphTip.Dispose();
         }
 
         // ── Event handlers ────────────────────────────────────────────────────────────
@@ -123,6 +134,7 @@ namespace Level_Up_Mock
         private void pnlGraph_Paint(object? sender, PaintEventArgs e)
         {
             var bounds = new Rectangle(0, 0, pnlGraph.Width, pnlGraph.Height);
+            _hitPoints = new List<GraphPoint>();
 
             switch (_selectedView)
             {
@@ -136,6 +148,201 @@ namespace Level_Up_Mock
                     DrawGrades(e.Graphics, bounds);
                     break;
             }
+        }
+
+        // Shows the exact value of the point under the mouse. Only the nearest point within a
+        // short distance counts, so the tooltip does not flicker between neighbours.
+        private void pnlGraph_MouseMove(object? sender, MouseEventArgs e)
+        {
+            float reach = Ui.S(this, 12);
+            GraphPoint? nearest = null;
+            float best = reach * reach;
+
+            foreach (var point in _hitPoints)
+            {
+                float dx = point.Location.X - e.X, dy = point.Location.Y - e.Y;
+                float distance = dx * dx + dy * dy;
+                if (distance <= best)
+                {
+                    best = distance;
+                    nearest = point;
+                }
+            }
+
+            if (nearest == null)
+            {
+                HideGraphTip();
+                return;
+            }
+            if (nearest == _hoveredPoint) return;
+
+            _hoveredPoint = nearest;
+            _graphTip.Show(DescribePoint(nearest), pnlGraph,
+                (int)nearest.Location.X + Ui.S(this, 12), (int)nearest.Location.Y - Ui.S(this, 40));
+        }
+
+        private void HideGraphTip()
+        {
+            if (_hoveredPoint == null) return;
+            _hoveredPoint = null;
+            _graphTip.Hide(pnlGraph);
+        }
+
+        // The tooltip text for one point, worded for the tab it is on.
+        private string DescribePoint(GraphPoint point)
+        {
+            string label = point.Index < _currentLabels.Count ? _currentLabels[point.Index] : string.Empty;
+
+            switch (_selectedView)
+            {
+                case VIEW_HOURS_ALL:
+                    return $"Week of {label}\n{point.Value:0.#} h studied";
+
+                case VIEW_HOURS_SUBJECT:
+                    int minutes = (int)Math.Round(point.Value * 60);
+                    return $"{point.SeriesName}  ·  {label}\n{StudyStats.FormatMinutes(minutes)}";
+
+                case VIEW_GRADE:
+                    var grades = GetSelectedSubjectGrades();
+                    if (point.Index >= grades.Count) return string.Empty;
+                    var grade = grades[point.Index];
+                    return $"{grade.AssessmentName}  ·  {grade.AssessmentDate:d MMM yyyy}\n" +
+                           $"{grade.Score:0.#}%   (target {grade.TargetGrade})";
+
+                default:
+                    return string.Empty;
+            }
+        }
+
+        // "Manage results": lists the chosen subject's results with a Delete button each,
+        // so a result entered by mistake can be removed.
+        private void btnManageResults_Click(object? sender, EventArgs e)
+        {
+            if (_gradeSubjectIndex < 0 || _gradeSubjectIndex >= _subjects.Count) return;
+            var subject = _subjects[_gradeSubjectIndex];
+
+            using var dialog = new Form
+            {
+                Text = $"Results: {subject.SubjectName}",
+                ClientSize = new Size(560, 420),
+                StartPosition = FormStartPosition.CenterParent,
+                FormBorderStyle = FormBorderStyle.FixedDialog,
+                MaximizeBox = false,
+                MinimizeBox = false,
+                BackColor = Theme.Background,
+                ForeColor = Color.White,
+                AutoScaleDimensions = new SizeF(96F, 96F),
+                AutoScaleMode = AutoScaleMode.Dpi
+            };
+
+            var list = new Panel
+            {
+                Location = new Point(20, 20),
+                Size = new Size(520, 330),
+                AutoScroll = true,
+                BackColor = Color.Transparent
+            };
+
+            var btnClose = new RoundedButton
+            {
+                Text = "Close",
+                Font = new Font("Segoe UI", 10f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Size = new Size(120, 38),
+                Location = new Point(420, 364),
+                DialogResult = DialogResult.OK
+            };
+            Ui.StyleFlatButton(btnClose, Theme.Blue, Theme.BlueLight);
+            btnClose.FlatAppearance.BorderSize = 0;
+
+            dialog.Controls.AddRange(new Control[] { list, btnClose });
+            dialog.CancelButton = btnClose;
+
+            void FillList()
+            {
+                var old = list.Controls.Cast<Control>().ToList();
+                list.Controls.Clear();
+                old.ForEach(c => c.Dispose());
+
+                var grades = _grades.Where(g => g.SubjectID == subject.SubjectID).ToList();
+                if (grades.Count == 0)
+                {
+                    list.Controls.Add(new Label
+                    {
+                        Text = "No results for this subject.",
+                        Font = new Font("Segoe UI", 11f),
+                        ForeColor = Theme.TextMuted,
+                        Dock = DockStyle.Fill,
+                        TextAlign = ContentAlignment.MiddleCenter
+                    });
+                    return;
+                }
+
+                int y = 0;
+                foreach (var grade in grades)
+                {
+                    var row = new RoundedPanel
+                    {
+                        Location = new Point(0, y + list.AutoScrollPosition.Y),
+                        Size = new Size(list.ClientSize.Width - SystemInformation.VerticalScrollBarWidth, dialog.LogicalToDeviceUnits(48)),
+                        BackColor = Theme.Surface,
+                        AccentColour = subject.GetColour()
+                    };
+                    row.Controls.Add(new Label
+                    {
+                        Text = grade.AssessmentName,
+                        Font = new Font("Segoe UI", 10f, FontStyle.Bold),
+                        Location = new Point(dialog.LogicalToDeviceUnits(18), dialog.LogicalToDeviceUnits(13)),
+                        Size = new Size(dialog.LogicalToDeviceUnits(190), dialog.LogicalToDeviceUnits(24)),
+                        AutoEllipsis = true
+                    });
+                    row.Controls.Add(new Label
+                    {
+                        Text = $"{grade.AssessmentDate:d MMM yyyy}   {grade.Score:0.#}%   ({grade.TargetGrade})",
+                        Font = new Font("Segoe UI", 9.5f),
+                        ForeColor = Theme.TextMuted,
+                        Location = new Point(dialog.LogicalToDeviceUnits(214), dialog.LogicalToDeviceUnits(14)),
+                        Size = new Size(dialog.LogicalToDeviceUnits(190), dialog.LogicalToDeviceUnits(22))
+                    });
+
+                    var btnDelete = new RoundedButton
+                    {
+                        Text = "Delete",
+                        Font = new Font("Segoe UI", 9f, FontStyle.Bold),
+                        ForeColor = Color.White,
+                        Size = new Size(dialog.LogicalToDeviceUnits(80), dialog.LogicalToDeviceUnits(30)),
+                        Location = new Point(row.Width - dialog.LogicalToDeviceUnits(92), dialog.LogicalToDeviceUnits(9))
+                    };
+                    Ui.StyleFlatButton(btnDelete, Theme.Red, Color.FromArgb(255, 80, 100));
+                    btnDelete.FlatAppearance.BorderSize = 0;
+                    btnDelete.Click += (s, args) =>
+                    {
+                        var confirm = MessageBox.Show(dialog,
+                            $"Delete \"{grade.AssessmentName}\" ({grade.Score:0.#}%)?", "Delete Result",
+                            MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                        if (confirm != DialogResult.Yes) return;
+
+                        if (!grade.DeleteGrade())
+                        {
+                            MessageBox.Show(dialog, "Could not delete this result.", "Delete Error",
+                                MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            return;
+                        }
+                        _grades.Remove(grade);
+                        FillList();
+                    };
+                    row.Controls.Add(btnDelete);
+
+                    list.Controls.Add(row);
+                    y += row.Height + dialog.LogicalToDeviceUnits(8);
+                }
+            }
+
+            dialog.Load += (s, args) => FillList();
+            dialog.ShowDialog(this);
+
+            // Results may have been deleted, so redraw the graph and summary.
+            SwitchView(VIEW_GRADE);
         }
 
         // ── Loading and view switching ────────────────────────────────────────────────
@@ -167,6 +374,8 @@ namespace Level_Up_Mock
             bool showSubject = view == VIEW_GRADE || view == VIEW_HISTORY;
             lblRange.Visible = btnRange14.Visible = btnRange28.Visible = showRange;
             lblOptionSubject.Visible = cmbOptionSubject.Visible = showSubject;
+            btnManageResults.Visible = view == VIEW_GRADE && _subjects.Count > 0;
+            HideGraphTip();
 
             foreach (var btn in new[] { btnRange14, btnRange28 })
             {
@@ -185,7 +394,6 @@ namespace Level_Up_Mock
             if (isHistory)
             {
                 RenderHistory();
-                lblSummary.Text = string.Empty;
             }
             else
             {
@@ -219,7 +427,8 @@ namespace Level_Up_Mock
                 new GraphSeries { Name = "All subjects", Colour = Theme.Blue, Values = hours }
             };
 
-            LineGraphRenderer.Draw(g, bounds, StudyStats.GetWeekLabels(WEEKS_SHOWN, DateTime.Today),
+            _currentLabels = StudyStats.GetWeekLabels(WEEKS_SHOWN, DateTime.Today);
+            _hitPoints = LineGraphRenderer.Draw(g, bounds, _currentLabels,
                 series, "Hours", emptyMessage: "No study sessions in the last 8 weeks");
         }
 
@@ -228,7 +437,8 @@ namespace Level_Up_Mock
         private void DrawHoursPerSubject(Graphics g, Rectangle bounds)
         {
             var series = BuildSubjectSeries();
-            LineGraphRenderer.Draw(g, bounds, StudyStats.GetDayLabels(_rangeDays, DateTime.Today),
+            _currentLabels = StudyStats.GetDayLabels(_rangeDays, DateTime.Today);
+            _hitPoints = LineGraphRenderer.Draw(g, bounds, _currentLabels,
                 series, "Hours", emptyMessage: $"No study sessions in the last {_rangeDays} days");
         }
 
@@ -282,7 +492,8 @@ namespace Level_Up_Mock
             // The target line follows the most recent result's target grade.
             double target = Grade.GetTargetAsPercentage(grades[^1].TargetGrade);
 
-            LineGraphRenderer.Draw(g, bounds, labels, series, "Score %",
+            _currentLabels = labels;
+            _hitPoints = LineGraphRenderer.Draw(g, bounds, labels, series, "Score %",
                 targetLine: target, fixedYMax: 100);
         }
 
@@ -297,7 +508,10 @@ namespace Level_Up_Mock
             {
                 var hours = StudyStats.GetWeeklyTotalHours(_weeklyData);
                 double thisWeek = hours.Count > 0 ? hours[^1] : 0;
-                lblSummary.Text = $"This week: {thisWeek:0.#} h   |   Last {WEEKS_SHOWN} weeks: {hours.Sum():0.#} h";
+                int streak = StudyStats.GetCurrentStreak(_sessions, DateTime.Today);
+                lblSummary.Text =
+                    $"This week: {thisWeek:0.#} h   |   Best week: {StudyStats.GetBestWeekHours(_weeklyData):0.#} h   |   " +
+                    $"Last {WEEKS_SHOWN} weeks: {hours.Sum():0.#} h   |   🔥 {streak}-day streak";
                 AddLegendItem(Theme.Blue, "All subjects", 0);
             }
             else if (view == VIEW_HOURS_SUBJECT)
@@ -308,8 +522,13 @@ namespace Level_Up_Mock
                 {
                     x = AddLegendItem(line.Colour, line.Name, x);
                 }
-                lblSummary.Text = string.Join("   |   ",
-                    series.Select(s => $"{s.Name} {s.Values.Sum():0.#} h"));
+                // Each subject's share of the time shows how evenly revision is spread.
+                double total = series.Sum(s => s.Values.Sum());
+                lblSummary.Text = string.Join("   |   ", series.Select(s =>
+                {
+                    double h = s.Values.Sum();
+                    return total > 0 ? $"{s.Name} {h:0.#} h ({h / total * 100:0}%)" : $"{s.Name} 0 h";
+                }));
             }
             else
             {
@@ -381,11 +600,21 @@ namespace Level_Up_Mock
             int? filterSubjectID = filterIndex >= 0 && filterIndex < _subjects.Count
                 ? _subjects[filterIndex].SubjectID : null;
 
-            var sessions = _sessions
+            var matching = _sessions
                 .Where(s => filterSubjectID == null || s.SubjectID == filterSubjectID)
+                .ToList();
+            var sessions = matching
                 .OrderByDescending(s => s.StartTime)
                 .Take(MAX_HISTORY_ROWS)
                 .ToList();
+
+            int totalMinutes = matching.Sum(s => s.DurationMinutes);
+            int withNotes = matching.Count(s => !string.IsNullOrWhiteSpace(s.Notes));
+            lblSummary.Text = matching.Count == 0
+                ? string.Empty
+                : $"{matching.Count} session{(matching.Count != 1 ? "s" : "")}   |   " +
+                  $"{StudyStats.FormatMinutes(totalMinutes)} total   |   {withNotes} with notes" +
+                  (matching.Count > MAX_HISTORY_ROWS ? $"   |   showing newest {MAX_HISTORY_ROWS}" : string.Empty);
 
             if (sessions.Count == 0)
             {

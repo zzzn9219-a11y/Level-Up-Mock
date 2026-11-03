@@ -86,6 +86,19 @@ namespace Level_Up_Mock
                 valid = false;
             }
 
+            // The score box starts at 0, so a 0 is far more likely to be a forgotten box than a
+            // real result. Ask before saving it.
+            if (valid && nudScore.Value == 0)
+            {
+                var answer = MessageBox.Show("Save a score of 0%?", "Check Score",
+                    MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+                if (answer != DialogResult.Yes)
+                {
+                    nudScore.Focus();
+                    return false;
+                }
+            }
+
             return valid;
         }
 

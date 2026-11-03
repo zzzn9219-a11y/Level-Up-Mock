@@ -21,7 +21,7 @@ Notes for the Version 3 write-up. Everything here happened during development.
 
 ## Checks run before Windows testing
 
-67 automated checks ran against a temporary database (data classes only, not the screens). All passed:
+The automated checks ran against a temporary database (data classes only, not the screens). All passed:
 
 - Quest dates, rewards, status changes, one-time penalty, penalty not repeated after reload, rewards never below 0.
 - Grade validation (0 and 100 accepted, outside rejected, future date rejected), grade order, target percentages.
@@ -52,9 +52,48 @@ Notes for the Version 3 write-up. Everything here happened during development.
 - **Cause:** if a quest's status could not be saved, the unlock check on the countdown tick could keep reloading.
 - **Fix:** loading quests writes countdown text without running the status checks again.
 
+## Review pass: gaps found and fixed
+
+### 6. Quest messages popped up over other screens
+- **Cause:** the home screen's 1 second timer kept running while home was hidden behind another screen, so a quest running out showed its message on top of, say, the Store.
+- **Fix:** the timer pauses while another screen is open. When home comes back it reloads and reports anything that happened.
+
+### 7. A graph of 0% grades showed "No results yet"
+- **Cause:** the graph treated a line of zeros as no data, which is right for study hours but wrong for real 0% scores.
+- **Fix:** on the grade graph (fixed 0 to 100 scale) any result counts as data.
+
+### 8. A grade entered by mistake could not be removed
+- **Fix:** "Manage results" on the Grade Progress tab lists the subject's results with a Delete button each (asks first).
+
+### 9. A pending quest with a typo could not be removed
+- **Fix:** pending quests have a Remove button. Active quests cannot be removed, so removing is never a way to dodge the penalty.
+
+### 10. Closing the timer window lost the session without asking
+- **Fix:** closing while a session is running or waiting to be saved now asks first.
+
+### 11. Score of 0 saved by accident
+- **Cause:** the score box starts at 0.
+- **Fix:** saving a 0% result asks for confirmation.
+
+### 12. Dropdowns opened with a bright blue box
+- **Cause:** the subject dropdown had keyboard focus when the screen opened.
+- **Fix:** focus starts on the main button (Study Timer on home, Start on the timer).
+
+## Review pass: improvements
+
+- **Home:** study streak and today's study time on the profile card ("🔥 3-day streak · 45m today"). The Quests button shows the number of active quests and the Challenge button shows progress, e.g. "Challenge 65%". Hovering a quest row shows its subject, due time and reward.
+- **Tracker:** hover over any point to see its exact value. The summary line now shows best week and streak (Hours: All), each subject's share of time (Per Subject), and session count, total time and notes count (Session History).
+- **Quests screen:** a stats line at the top: active, unlocking, done, success rate and rewards earned.
+- **Challenge:** a pace hint, e.g. "To finish: about 1.2 h a day for the next 4 days".
+- **Streak rule:** the streak counts days in a row with study. If nothing is logged yet today, yesterday still keeps it alive, so it does not drop to 0 first thing in the morning.
+
+79 automated checks now pass (12 new ones for the streak, day totals, pace and quest removal).
+
 ## Still to test on Windows
 
 - Every new screen at 100%, 125% and 150% display scaling.
+- Hover tooltips on the graphs and on home quest rows.
+- Close the timer mid-session: it asks first.
 - Hover, pressed and Tab focus on buttons.
 - Graphs: with seeded test data (Dev Tools) and with a brand new user.
 - The Dev button is absent in a Release build.

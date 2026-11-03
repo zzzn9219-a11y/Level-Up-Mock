@@ -195,9 +195,20 @@ namespace Level_Up_Mock
                 $"   Lose: get {challenge.GetPayout(false)} back.";
             lblActiveCountdown.Text = $"Time left: {challenge.GetCountdownString()}";
 
-            lblActiveNote.Text = challenge.GoalReached
-                ? "Goal reached! Rewards are paid when the week ends."
-                : string.Empty;
+            // Either a well done message, or how much a day is still needed to finish.
+            if (challenge.GoalReached)
+            {
+                lblActiveNote.Text = "Goal reached! Rewards are paid when the week ends.";
+                lblActiveNote.ForeColor = Theme.Green;
+            }
+            else
+            {
+                int daysLeft = Math.Max(1, (int)Math.Ceiling(challenge.GetTimeRemaining().TotalDays));
+                lblActiveNote.Text =
+                    $"To finish: about {challenge.GetHoursPerDayNeeded():0.#} h a day for the next " +
+                    $"{daysLeft} day{(daysLeft != 1 ? "s" : "")}.";
+                lblActiveNote.ForeColor = Theme.TextMuted;
+            }
         }
 
         // ── Result view ───────────────────────────────────────────────────────────────

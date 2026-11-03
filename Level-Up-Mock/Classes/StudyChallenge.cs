@@ -103,6 +103,19 @@ namespace Level_Up_Mock
             return success ? _stakedRewards * 2 : _stakedRewards / 2;
         }
 
+        // ── Pace ──────────────────────────────────────────────────────────────────────
+
+        // Hours a day still needed to meet the goal in the days that are left. Returns 0 once
+        // the goal is met. With less than a day left, the whole remaining amount is due today.
+        public double GetHoursPerDayNeeded()
+        {
+            int remainingMinutes = _goalMinutes - _minutesLogged;
+            if (remainingMinutes <= 0) return 0;
+
+            double daysLeft = Math.Max(1.0, Math.Ceiling(GetTimeRemaining().TotalDays));
+            return remainingMinutes / 60.0 / daysLeft;
+        }
+
         // ── Countdown ─────────────────────────────────────────────────────────────────
 
         public TimeSpan GetTimeRemaining()

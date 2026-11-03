@@ -24,6 +24,9 @@ namespace Level_Up_Mock
         // Passed to Session constructor so CalculateDuration() gives the correct net value.
         private DateTime _netEndTime;
 
+        // Set once the user has saved or chosen to discard, so closing does not ask again.
+        private bool _closeConfirmed;
+
         // ── Constructor ───────────────────────────────────────────────────────────────
 
         // Takes the current user and their subjects from frmHome so they do not need
@@ -42,6 +45,29 @@ namespace Level_Up_Mock
         {
             LoadSubjects();
             ResetTimerDisplay();
+
+            // Start with focus on Start, so the subject dropdown does not open highlighted.
+            this.ActiveControl = btnStart;
+        }
+
+        // Closing the window (the X button) while a session is running or waiting to be
+        // saved would throw the study time away, so the user is asked first.
+        private void frmTimer_FormClosing(object? sender, FormClosingEventArgs e)
+        {
+            if (_closeConfirmed) return;
+
+            bool unsaved = _isRunning || pnlSummary.Visible;
+            if (!unsaved) return;
+
+            var answer = MessageBox.Show(
+                "You have a study session that has not been saved.\nClose the timer and lose this session?",
+                "Unsaved Session", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (answer != DialogResult.Yes)
+            {
+                e.Cancel = true;
+                return;
+            }
+            tmrDisplay.Stop();
         }
 
         // Start button: begins the timer if not already running and a subject is selected.
@@ -232,6 +258,7 @@ namespace Level_Up_Mock
             MessageBox.Show(xpMsg, "Session Saved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Return to frmHome.
+            _closeConfirmed = true;
             this.Close();
         }
 
@@ -241,6 +268,7 @@ namespace Level_Up_Mock
             if (MessageBox.Show("Discard this session? Your study time will not be saved.",
                 "Discard Session", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                _closeConfirmed = true;
                 this.Close();
             }
         }

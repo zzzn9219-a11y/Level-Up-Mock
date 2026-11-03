@@ -104,6 +104,20 @@ namespace Level_Up_Mock
             };
             cmbOptionSubject.SelectedIndexChanged += cmbOptionSubject_SelectedIndexChanged;
 
+            // Grade tab only: lets the user delete a result entered by mistake.
+            btnManageResults = new RoundedButton
+            {
+                Text = "Manage results",
+                Font = new Font("Segoe UI", 9f, FontStyle.Bold),
+                ForeColor = Color.White,
+                Size = new Size(140, 28),
+                Location = new Point(326, 108)
+            };
+            Ui.StyleFlatButton(btnManageResults, Theme.Surface, Theme.SurfaceHover);
+            btnManageResults.FlatAppearance.BorderColor = Theme.Border;
+            btnManageResults.FlatAppearance.BorderSize = 1;
+            btnManageResults.Click += btnManageResults_Click;
+
             // ── Graph, legend and summary ─────────────────────────────────────────────
             pnlGraph = new DoubleBufferedPanel
             {
@@ -144,7 +158,7 @@ namespace Level_Up_Mock
             {
                 lblTitle, btnBack, btnAddGrade,
                 btnTabHoursAll, btnTabHoursSubject, btnTabGrade, btnTabHistory,
-                lblRange, btnRange14, btnRange28, lblOptionSubject, cmbOptionSubject,
+                lblRange, btnRange14, btnRange28, lblOptionSubject, cmbOptionSubject, btnManageResults,
                 pnlGraph, pnlLegend, lblSummary, pnlHistory
             });
 
@@ -202,6 +216,7 @@ namespace Level_Up_Mock
         private Button btnRange28 = null!;
         private Label lblOptionSubject = null!;
         private ComboBox cmbOptionSubject = null!;
+        private Button btnManageResults = null!;
         private DoubleBufferedPanel pnlGraph = null!;
         private Panel pnlLegend = null!;
         private Label lblSummary = null!;

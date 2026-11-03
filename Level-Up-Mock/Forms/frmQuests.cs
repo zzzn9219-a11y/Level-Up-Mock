@@ -92,6 +92,22 @@ namespace Level_Up_Mock
             LoadQuests();
         }
 
+        // Remove button on a pending quest. Nothing is lost because it has not unlocked yet.
+        private void RemoveQuest(Quest quest)
+        {
+            var confirm = MessageBox.Show(
+                $"Remove the quest \"{quest.TopicName}\"?\nIt has not unlocked yet, so no rewards are lost.",
+                "Remove Quest", MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            if (confirm != DialogResult.Yes) return;
+
+            if (!quest.RemovePendingQuest())
+            {
+                MessageBox.Show("This quest can no longer be removed.", "Quest",
+                    MessageBoxButtons.OK, MessageBoxIcon.Information);
+            }
+            LoadQuests();
+        }
+
         // ── Private methods ───────────────────────────────────────────────────────────
 
         // Brings every quest up to date with the clock, tells the user about any that failed,
@@ -123,6 +139,7 @@ namespace Level_Up_Mock
             // A brand new user has no quests, so say how to get one.
             if (_quests.Count == 0)
             {
+                lblStats.Text = string.Empty;
                 pnlList.Controls.Add(new Label
                 {
                     Text = "No quests yet.\nTick \"Mark topic complete\" after a study session to create one.",
@@ -142,6 +159,13 @@ namespace Level_Up_Mock
             var history = _quests.Where(q => q.Status == Quest.STATUS_COMPLETED || q.Status == Quest.STATUS_FAILED)
                                  .OrderByDescending(q => q.CompletedAt ?? q.DeadlineDate)
                                  .Take(MAX_HISTORY_ROWS).ToList();
+
+            int completedCount = _quests.Count(q => q.Status == Quest.STATUS_COMPLETED);
+            int failedCount = _quests.Count(q => q.Status == Quest.STATUS_FAILED);
+            int finished = completedCount + failedCount;
+            int earned = _quests.Where(q => q.Status == Quest.STATUS_COMPLETED).Sum(q => q.RewardOnSuccess);
+            lblStats.Text = $"{active.Count} active  ·  {pending.Count} unlocking  ·  {completedCount} done" +
+                (finished > 0 ? $"  ·  {completedCount * 100 / finished}% success  ·  ★ {earned} earned" : string.Empty);
 
             int y = 0;
             y = AddSection("ACTIVE", active, y, BuildActiveRow, "No active quests right now.");
@@ -292,13 +316,17 @@ namespace Level_Up_Mock
                 Text = $"★ +{quest.RewardOnSuccess}",
                 Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
                 ForeColor = GOLD,
-                Location = Ui.P(this, 600, 20),
-                Size = Ui.S(this, 100, 26)
+                Location = Ui.P(this, 545, 20),
+                Size = Ui.S(this, 86, 26)
             };
+
+            // A quest that has not unlocked can be removed (for example a typo in the topic).
+            var btnRemove = MakeRowButton("Remove", row.Width - Ui.S(this, 96), Color.FromArgb(40, 46, 70));
+            btnRemove.Click += (s, e) => RemoveQuest(quest);
 
             row.Controls.AddRange(new Control[]
             {
-                MakeTopicLabel(quest), MakeSubLabel(GetSubjectName(quest)), lblUnlock, lblReward
+                MakeTopicLabel(quest), MakeSubLabel(GetSubjectName(quest)), lblUnlock, lblReward, btnRemove
             });
             return row;
         }

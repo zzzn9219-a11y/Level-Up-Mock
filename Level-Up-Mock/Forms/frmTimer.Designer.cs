@@ -30,6 +30,7 @@ namespace Level_Up_Mock
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Load += frmTimer_Load;
+            this.FormClosing += frmTimer_FormClosing;
 
             // ── Page title ────────────────────────────────────────────────────────────
             var lblTitle = new Label
