@@ -50,6 +50,17 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
+            // Totals at a glance, filled in by RenderQuestList.
+            lblStats = new Label
+            {
+                Text = string.Empty,
+                Font = new Font("Segoe UI", 10f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(255, 215, 0),
+                Location = new Point(170, 28),
+                Size = new Size(480, 24),
+                AutoEllipsis = true
+            };
+
             btnBack = new RoundedButton
             {
                 Text = "← Back",
@@ -76,13 +87,17 @@ namespace Level_Up_Mock
             tmrListCountdown = new System.Windows.Forms.Timer(components) { Interval = 1000 };
             tmrListCountdown.Tick += tmrListCountdown_Tick;
 
-            this.Controls.AddRange(new Control[] { lblTitle, lblSubtitle, btnBack, pnlList });
+            this.Controls.AddRange(new Control[] { lblTitle, lblStats, lblSubtitle, btnBack, pnlList });
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.QUESTS, 666, 22);
 
             this.ResumeLayout(false);
             this.PerformLayout();
         }
 
         // ── Control declarations ──────────────────────────────────────────────────────
+        private Label lblStats = null!;
         private Button btnBack = null!;
         private Panel pnlList = null!;
         private System.Windows.Forms.Timer tmrListCountdown = null!;

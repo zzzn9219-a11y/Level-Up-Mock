@@ -230,7 +230,7 @@ namespace Level_Up_Mock
             // Preview shows the item on the user's own avatar. Unaffordable items are faded,
             // which says "not yet" rather than hiding the item completely.
             var previewSize = Ui.S(this, 96, 116);
-            Bitmap preview = AvatarRenderer.RenderWithItem(_equipped, item, previewSize);
+            Bitmap preview = AvatarRenderer.RenderWithItem(_equipped, item, previewSize, AvatarRenderer.GetSkinTone(_user));
             if (!owned && !affordable)
             {
                 Bitmap faded = AvatarRenderer.CreateFadedCopy(preview);
@@ -335,7 +335,7 @@ namespace Level_Up_Mock
 
             if (item == null)
             {
-                picDetail.Image = AvatarRenderer.Render(_equipped, picDetail.Size);
+                picDetail.Image = AvatarRenderer.Render(_equipped, picDetail.Size, AvatarRenderer.GetSkinTone(_user));
                 lblDetailName.Text = "Your Hunter";
                 lblDetailDescription.Text = "Click an item above to preview it on your avatar.";
                 lblDetailPrice.Text = string.Empty;
@@ -343,7 +343,7 @@ namespace Level_Up_Mock
                 return;
             }
 
-            picDetail.Image = AvatarRenderer.RenderWithItem(_equipped, item, picDetail.Size);
+            picDetail.Image = AvatarRenderer.RenderWithItem(_equipped, item, picDetail.Size, AvatarRenderer.GetSkinTone(_user));
             lblDetailName.Text = item.DisplayName;
             lblDetailDescription.Text = item.Description;
             lblDetailPrice.Text = $"⚡ {item.XPCost} XP  ·  {item.Category}";

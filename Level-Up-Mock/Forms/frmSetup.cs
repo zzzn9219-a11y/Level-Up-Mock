@@ -81,10 +81,13 @@ namespace Level_Up_Mock
 
             if (!success) return;
 
-            // Navigate to frmHome after saving (back on UI thread).
+            // After saving, the new user picks an avatar. Closing this form afterwards lets
+            // frmAccountSelect open the home screen, so home is opened in one place only.
             AppSession.CurrentUserID = _newUser!.UserID;
-            var home = new frmHome();
-            home.Show();
+            using (var avatar = new frmAvatarSetup(_newUser, firstTime: true))
+            {
+                avatar.ShowDialog(this);
+            }
             this.Close();
         }
 

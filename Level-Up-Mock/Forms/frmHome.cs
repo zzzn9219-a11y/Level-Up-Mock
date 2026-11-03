@@ -6,6 +6,7 @@ namespace Level_Up_Mock
     // Shows the user's profile summary (avatar, level, XP), the three soonest deadline
     // countdowns, the past paper links, and navigation buttons to every other feature.
     // Version 2 adds the avatar render, deadlines, past papers, store and leaderboard.
+    // Version 3 adds quests, the study tracker, the weekly challenge and settings.
     public partial class frmHome : Form
     {
         // ── Constants ─────────────────────────────────────────────────────────────────
@@ -28,6 +29,9 @@ namespace Level_Up_Mock
         private List<Quest> _activeQuests = new();
         private List<Quest> _pendingQuests = new();
 
+        // Hover text for the quest rows: subject, due time and reward.
+        private readonly ToolTip _questTip = new();
+
         // ── Constructor ───────────────────────────────────────────────────────────────
 
         public frmHome()
@@ -40,6 +44,7 @@ namespace Level_Up_Mock
                 _questCompleteButtons[i].Tag = i;
                 _questCompleteButtons[i].Click += btnQuestDone_Click;
             }
+            this.FormClosed += (s, e) => _questTip.Dispose();
         }
 
         // ── Event handlers ────────────────────────────────────────────────────────────
@@ -49,6 +54,9 @@ namespace Level_Up_Mock
         {
             LoadUserData();
             tmrCountdown.Start();
+
+            // Start with focus on the main action, so no dropdown opens highlighted.
+            this.ActiveControl = btnTimer;
         }
 
         private void frmHome_FormClosed(object? sender, FormClosedEventArgs e)
@@ -90,6 +98,24 @@ namespace Level_Up_Mock
             LoadUserData();
         }
 #endif
+
+        // "Challenge" navigation button.
+        private void btnChallenge_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmChallenge(_user!));
+        }
+
+        // "Settings" navigation button.
+        private void btnSettings_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmSettings(_user!, _subjects));
+        }
+
+        // "Tracker" navigation button.
+        private void btnTracker_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmTracker(_user!, _subjects));
+        }
 
         // "Quests" navigation button.
         private void btnQuests_Click(object? sender, EventArgs e)
@@ -191,8 +217,16 @@ namespace Level_Up_Mock
             child.FormClosed += (s, args) =>
             {
                 LoadUserData();
+
+                // LoadUserData closes this form if the profile was deleted in Settings.
+                if (this.IsDisposed) return;
                 this.Show();
+                tmrCountdown.Start();
             };
+
+            // The countdowns pause while home is hidden, so a quest that runs out cannot pop
+            // up a message over another screen. LoadUserData catches up when home returns.
+            tmrCountdown.Stop();
             child.Show();
             this.Hide();
         }
@@ -222,7 +256,40 @@ namespace Level_Up_Mock
             UpdateAvatar();
             LoadDeadlines();
             LoadQuests();
+            SettleChallenge();
+            UpdateStreak();
+            UpdateNavCounts();
             LoadPastPaperSubjects();
+        }
+
+        // Shows the study streak and today's study time on the profile card.
+        private void UpdateStreak()
+        {
+            if (_user == null) return;
+
+            var sessions = Session.GetSessionsForUser(_user.UserID);
+            int streak = StudyStats.GetCurrentStreak(sessions, DateTime.Today);
+            int today = StudyStats.GetMinutesOnDay(sessions, DateTime.Today);
+
+            lblStreak.Text = streak > 0
+                ? $"🔥 {streak}-day streak  ·  {StudyStats.FormatMinutes(today)} today"
+                : "🔥 Study today to start a streak";
+        }
+
+        // The Quests and Challenge buttons show live numbers, so the user can see there is
+        // something to do without opening the screens.
+        private void UpdateNavCounts()
+        {
+            if (_user == null) return;
+
+            btnQuests.Text = _activeQuests.Count > 0
+                ? $"📜  Quests ({_activeQuests.Count})"
+                : "📜  Quests";
+
+            var challenge = StudyChallenge.GetActiveChallenge(_user.UserID);
+            btnChallenge.Text = challenge != null
+                ? $"🎯  Challenge {challenge.ProgressPercentage:0}%"
+                : "🎯  Challenge";
         }
 
         // Draws the user's avatar from the items they have equipped in the store.
@@ -232,7 +299,7 @@ namespace Level_Up_Mock
 
             var equipped = StoreInventory.GetEquippedItems(_user.UserID);
             var old = picAvatar.Image;
-            picAvatar.Image = AvatarRenderer.Render(equipped, picAvatar.Size);
+            picAvatar.Image = AvatarRenderer.Render(equipped, picAvatar.Size, AvatarRenderer.GetSkinTone(_user));
             old?.Dispose();
         }
 
@@ -283,6 +350,7 @@ namespace Level_Up_Mock
                 chip.Size = new Size(width, pnlSubjectChips.Height);
                 chip.Location = new Point(x, 0);
                 pnlSubjectChips.Controls.Add(chip);
+                Ui.AddTip(this, chip, $"{subject.SubjectName} ({subject.ExamBoard}). This colour marks {subject.SubjectName} across the app.");
                 x += width + Ui.S(this, 8);
             }
         }
@@ -374,6 +442,30 @@ namespace Level_Up_Mock
 
             RenderQuestPanel();
             ShowQuestCountdownText();
+            UpdateNavCounts();
+        }
+
+        // If the weekly challenge ended while the app was closed, settles it now (Algorithm 10.2)
+        // and tells the user the result. The outcome can only be applied once.
+        private void SettleChallenge()
+        {
+            if (_user == null) return;
+
+            var settled = StudyChallenge.ResolveFinishedChallenge(_user);
+            if (settled == null) return;
+
+            bool success = settled.Status == StudyChallenge.STATUS_SUCCESS;
+            int payout = settled.GetPayout(success);
+
+            string message = success
+                ? $"Challenge complete! +{payout} rewards"
+                : payout > 0
+                    ? $"Challenge failed. {payout} rewards returned."
+                    : "Challenge failed. No rewards returned.";
+            MessageBox.Show(message, "Weekly Challenge", MessageBoxButtons.OK,
+                success ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+            lblRewards.Text = $"★ {_user.Rewards} Rewards";
         }
 
         // Writes the current countdown text into each visible quest row. It does no status
@@ -406,6 +498,13 @@ namespace Level_Up_Mock
                 _questTopicLabels[i].Text = quest.TopicName;
                 _questTopicLabels[i].ForeColor = colour;
                 _questCountdownLabels[i].ForeColor = colour;
+
+                string subjectName = _subjects.FirstOrDefault(s => s.SubjectID == quest.SubjectID)?.SubjectName ?? "Unknown subject";
+                string tip = $"{quest.TopicName} ({subjectName})\nDue {quest.DeadlineDate:ddd d MMM, HH:mm}\n" +
+                             $"+{quest.RewardOnSuccess} rewards if done, -{quest.RewardOnFailure} if missed";
+                _questTip.SetToolTip(_questTopicLabels[i], tip);
+                _questTip.SetToolTip(_questCountdownLabels[i], tip);
+                _questTip.SetToolTip(_questCompleteButtons[i], $"Mark \"{quest.TopicName}\" as revisited");
             }
 
             // A note under the rows when more quests are waiting.
@@ -462,6 +561,7 @@ namespace Level_Up_Mock
 
             lblRewards.Text = $"★ {_user.Rewards} Rewards";
             RenderQuestPanel();
+            UpdateNavCounts();
             tmrCountdown.Start();
         }
 

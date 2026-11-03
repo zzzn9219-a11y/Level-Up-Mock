@@ -19,8 +19,16 @@ namespace Level_Up_Mock
         public static readonly Color TextMuted = Color.FromArgb(160, 168, 192);
         public static readonly Color TextDim = Color.FromArgb(100, 108, 132);
 
+        // Input fields: a fill a little lighter than the cards so fields stand out on them,
+        // a soft border, a brighter border on hover, and the blue accent when typing.
+        public static readonly Color InputFill = Color.FromArgb(26, 31, 52);
+        public static readonly Color InputBorder = Color.FromArgb(58, 66, 98);
+        public static readonly Color InputHover = Color.FromArgb(92, 104, 150);
+        public static readonly Color ListFill = Color.FromArgb(22, 27, 46);
+
         // Corner radius of cards and buttons, in pixels at 96 DPI.
         public const int CardRadius = 12;
         public const int ButtonRadius = 10;
+        public const int InputRadius = 8;
     }
 }

@@ -124,6 +124,16 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
+            // Study streak and today's time, so the user sees their habit at a glance.
+            lblStreak = new Label
+            {
+                Text = string.Empty,
+                Font = new Font("Segoe UI", 10.5f, FontStyle.Bold),
+                ForeColor = Color.FromArgb(255, 150, 40),
+                Location = new Point(580, 86),
+                AutoSize = true
+            };
+
             // XP bar background track.
             var pnlXPBarTrack = new RoundedPanel
             {
@@ -154,7 +164,7 @@ namespace Level_Up_Mock
 
             pnlProfile.Controls.AddRange(new Control[]
             {
-                picAvatar, lblWelcome, lblUsername, lblLevel, lblXP, lblRewards,
+                picAvatar, lblWelcome, lblUsername, lblLevel, lblXP, lblRewards, lblStreak,
                 pnlXPBarTrack, lblXPProgress
             });
 
@@ -287,8 +297,9 @@ namespace Level_Up_Mock
             // ── Past papers strip (one line to save height) ──────────────────────────
             var lblPastPapersHeading = MakeHeading("PAST PAPERS", 20, 438);
 
-            cmbPastPaperSubject = new ComboBox
+            cmbPastPaperSubject = new ThemedComboBox
             {
+                Placeholder = "Choose a subject",
                 Location = new Point(130, 432),
                 Size = new Size(300, 28),
                 DropDownStyle = ComboBoxStyle.DropDownList,
@@ -338,15 +349,33 @@ namespace Level_Up_Mock
             var btnDeadlines = MakeNavButton("📅  Deadlines", 0, 1, navy);
             btnDeadlines.Click += btnDeadlines_Click;
 
-            // Placeholder buttons for features coming in Version 3.
-            var btnTracker = MakeNavButton("📊  Tracker", 2, 0, navy);
-            btnTracker.Enabled = false;
-            var btnChallenge = MakeNavButton("🎯  Challenge", 1, 1, navy);
-            btnChallenge.Enabled = false;
-            var btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
-            btnSettings.Enabled = false;
+            // Version 3 features.
+            btnTracker = MakeNavButton("📊  Tracker", 2, 0, navy);
+            btnTracker.Click += btnTracker_Click;
+            btnChallenge = MakeNavButton("🎯  Challenge", 1, 1, navy);
+            btnChallenge.Click += btnChallenge_Click;
+            btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
+            btnSettings.Click += btnSettings_Click;
             btnQuests = MakeNavButton("📜  Quests", 3, 1, navy);
             btnQuests.Click += btnQuests_Click;
+
+            // ── Hover text explaining each part of the home screen ────────────────────
+            Ui.AddTip(this, btnTimer, "Time a study session. Every saved minute earns XP.");
+            Ui.AddTip(this, btnStore, "Spend XP on hair, accessories and backgrounds for your avatar.");
+            Ui.AddTip(this, btnTracker, "Graphs of your study hours and grades, plus your session history.");
+            Ui.AddTip(this, btnLeaderboard, "See how your total study time ranks against other profiles on this computer.");
+            Ui.AddTip(this, btnDeadlines, "Add and manage countdowns to your exams, mocks and hand-ins.");
+            Ui.AddTip(this, btnChallenge, "Set a study goal for the week and stake rewards on it.");
+            Ui.AddTip(this, btnSettings, "Change your name, username, subject colours or avatar.");
+            Ui.AddTip(this, btnQuests, "Quests remind you to revisit a topic a week after you finished it.");
+            Ui.AddTip(this, lblLevel, "Your level goes up as you earn XP. The bar shows how close the next level is.");
+            Ui.AddTip(this, lblXP, "XP: 1 per minute studied, plus a 50% bonus for sessions over 60 minutes.");
+            Ui.AddTip(this, lblRewards, "Rewards: earned from quests and challenges, and staked on challenges.");
+            Ui.AddTip(this, lblStreak, "Days in a row you have studied. Study today to keep it going.");
+            Ui.AddTip(this, pnlSubjectChips, "Your subjects. Each colour is used for that subject across the app.");
+            Ui.AddTip(this, cmbPastPaperSubject, "Choose a subject, then open its exam board's past paper page.");
+            Ui.AddTip(this, lblNoQuests, "Tick 'Mark topic complete' after a study session to create a quest.");
+            Ui.AddTip(this, lblNoDeadlines, "Use the Deadlines button below to add one.");
 
             // ── Assemble form ─────────────────────────────────────────────────────────
             this.Controls.AddRange(new Control[]
@@ -377,6 +406,9 @@ namespace Level_Up_Mock
             btnDev.Click += btnDev_Click;
             this.Controls.Add(btnDev);
 #endif
+
+            // Opens the full guide to every feature.
+            Ui.AddHelpButton(this, HelpContent.HOME, 582, 10, "?  Help", 90);
 
             this.ResumeLayout(false);
             this.PerformLayout();
@@ -421,6 +453,7 @@ namespace Level_Up_Mock
         private Label lblLevel = null!;
         private Label lblXP = null!;
         private Label lblRewards = null!;
+        private Label lblStreak = null!;
         private Panel pnlXPBarFill = null!;
         private Label lblXPProgress = null!;
         private Panel pnlSubjectChips = null!;
@@ -434,6 +467,9 @@ namespace Level_Up_Mock
         private readonly Label[] _questCountdownLabels = new Label[3];
         private readonly Button[] _questCompleteButtons = new Button[3];
         private Button btnQuests = null!;
+        private Button btnTracker = null!;
+        private Button btnSettings = null!;
+        private Button btnChallenge = null!;
         private Label lblNoQuests = null!;
         private Label lblQuestsUpcoming = null!;
         private ComboBox cmbPastPaperSubject = null!;

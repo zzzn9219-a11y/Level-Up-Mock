@@ -207,6 +207,29 @@ namespace Level_Up_Mock
             return newlyFailed;
         }
 
+        // Removes a quest that has not unlocked yet (for example one made with a typo).
+        // Only pending quests can be removed: an active quest has to be completed or missed,
+        // otherwise deleting it would be a way to dodge the penalty.
+        public bool RemovePendingQuest()
+        {
+            if (_status != STATUS_PENDING) return false;
+
+            try
+            {
+                var conn = DatabaseManager.Instance.GetConnection();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "DELETE FROM Quest WHERE QuestID = @id AND Status = @status;";
+                cmd.Parameters.AddWithValue("@id", _questID);
+                cmd.Parameters.AddWithValue("@status", STATUS_PENDING);
+                return cmd.ExecuteNonQuery() == 1;
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"Quest.RemovePendingQuest error: {ex.Message}");
+                return false;
+            }
+        }
+
         // ── Database write methods ────────────────────────────────────────────────────
 
         // Inserts this quest as a new row and sets QuestID from the generated key.

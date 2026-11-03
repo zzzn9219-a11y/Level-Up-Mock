@@ -70,6 +70,12 @@ namespace Level_Up_Mock
             // ── Add top-level controls ────────────────────────────────────────────────
             this.Controls.AddRange(new Control[] { lblHeading, lblStepIndicator, pnlStage1, pnlStage2 });
 
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.PROFILES, 560, 22);
+
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
+
             this.ResumeLayout(false);
             this.PerformLayout();
         }
@@ -144,7 +150,7 @@ namespace Level_Up_Mock
             // Date of birth field (DateTimePicker)
             pnlStage1.Controls.Add(MakeFieldLabel("Date of Birth", y));
             y += 24;
-            dtpDateOfBirth = new DateTimePicker
+            dtpDateOfBirth = new ThemedDatePicker
             {
                 Location = new Point(0, y),
                 Size = new Size(240, 32),
@@ -163,7 +169,7 @@ namespace Level_Up_Mock
             // Gender / Pronouns dropdown (optional)
             pnlStage1.Controls.Add(MakeFieldLabel("Gender / Pronouns  (optional)", y));
             y += 24;
-            cmbGender = new ComboBox
+            cmbGender = new ThemedComboBox
             {
                 Location = new Point(0, y),
                 Size = new Size(260, 32),
@@ -181,7 +187,7 @@ namespace Level_Up_Mock
             // A-Level Year dropdown
             pnlStage1.Controls.Add(MakeFieldLabel("A-Level Year", y));
             y += 24;
-            cmbALevelYear = new ComboBox
+            cmbALevelYear = new ThemedComboBox
             {
                 Location = new Point(0, y),
                 Size = new Size(200, 32),
@@ -254,7 +260,7 @@ namespace Level_Up_Mock
                 pnlStage2.Controls.Add(txt);
 
                 // Exam board dropdown.
-                var cmb = new ComboBox
+                var cmb = new ThemedComboBox
                 {
                     Location = new Point(258, rowY),
                     Size = new Size(200, 32),

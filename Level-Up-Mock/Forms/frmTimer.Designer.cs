@@ -30,6 +30,7 @@ namespace Level_Up_Mock
             this.FormBorderStyle = FormBorderStyle.FixedSingle;
             this.MaximizeBox = false;
             this.Load += frmTimer_Load;
+            this.FormClosing += frmTimer_FormClosing;
 
             // ── Page title ────────────────────────────────────────────────────────────
             var lblTitle = new Label
@@ -51,8 +52,9 @@ namespace Level_Up_Mock
                 AutoSize = true
             };
 
-            cmbSubject = new ComboBox
+            cmbSubject = new ThemedComboBox
             {
+                Placeholder = "Choose a subject to study",
                 Location = new Point(30, 94),
                 Size = new Size(340, 36),
                 DropDownStyle = ComboBoxStyle.DropDownList,
@@ -261,7 +263,7 @@ namespace Level_Up_Mock
             };
             chkTopicComplete.CheckedChanged += chkTopicComplete_CheckedChanged;
 
-            cmbDifficulty = new ComboBox
+            cmbDifficulty = new ThemedComboBox
             {
                 Location = new Point(16, 180),
                 Size = new Size(130, 28),
@@ -302,6 +304,35 @@ namespace Level_Up_Mock
                 lblTimerDisplay, btnStart, btnPause, btnStop,
                 pnlSummary
             });
+
+            // Hover text for the controls that need explaining.
+            Ui.AddTip(this, cmbSubject, "The subject this session counts towards.");
+            Ui.AddTip(this, btnStart, "Start timing. Earn 1 XP per minute.");
+            Ui.AddTip(this, btnPause, "Take a break. Paused time is not counted.");
+            Ui.AddTip(this, btnStop, "Finish the session and see what you earned.");
+            Ui.AddTip(this, txtNotes, "Optional. Shown later in the Tracker under Session History.");
+            Ui.AddTip(this, txtTopic, "The topic you worked on, for example Kinematics.");
+            Ui.AddTip(this, chkTopicComplete, "Creates a quest to revisit this topic in 7 days. Revisit it within 2 days of unlocking to earn rewards.");
+            Ui.AddTip(this, cmbDifficulty, "How hard the topic was. Harder topics give more rewards: Easy 30, Medium 50, Hard 80.");
+            Ui.AddTip(this, btnSaveSession, "Save the session, add the XP and create the quest if ticked.");
+            Ui.AddTip(this, btnDiscardSession, "Throw this session away. Nothing is saved.");
+
+            // A short how-to next to the subject box.
+            var lblHowTo = new Label
+            {
+                Text = "Pick a subject and press Start. Every minute earns 1 XP, and paused time is not counted.",
+                Font = new Font("Segoe UI", 9f),
+                ForeColor = Color.FromArgb(160, 168, 192),
+                Location = new Point(390, 92),
+                Size = new Size(280, 40)
+            };
+            this.Controls.Add(lblHowTo);
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.TIMER, 630, 24);
+
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
 
             this.ResumeLayout(false);
             this.PerformLayout();

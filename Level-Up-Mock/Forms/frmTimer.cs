@@ -24,6 +24,9 @@ namespace Level_Up_Mock
         // Passed to Session constructor so CalculateDuration() gives the correct net value.
         private DateTime _netEndTime;
 
+        // Set once the user has saved or chosen to discard, so closing does not ask again.
+        private bool _closeConfirmed;
+
         // ── Constructor ───────────────────────────────────────────────────────────────
 
         // Takes the current user and their subjects from frmHome so they do not need
@@ -42,6 +45,29 @@ namespace Level_Up_Mock
         {
             LoadSubjects();
             ResetTimerDisplay();
+
+            // Start with focus on Start, so the subject dropdown does not open highlighted.
+            this.ActiveControl = btnStart;
+        }
+
+        // Closing the window (the X button) while a session is running or waiting to be
+        // saved would throw the study time away, so the user is asked first.
+        private void frmTimer_FormClosing(object? sender, FormClosingEventArgs e)
+        {
+            if (_closeConfirmed) return;
+
+            bool unsaved = _isRunning || pnlSummary.Visible;
+            if (!unsaved) return;
+
+            var answer = MessageBox.Show(
+                "You have a study session that has not been saved.\nClose the timer and lose this session?",
+                "Unsaved Session", MessageBoxButtons.YesNo, MessageBoxIcon.Warning);
+            if (answer != DialogResult.Yes)
+            {
+                e.Cancel = true;
+                return;
+            }
+            tmrDisplay.Stop();
         }
 
         // Start button: begins the timer if not already running and a subject is selected.
@@ -209,6 +235,14 @@ namespace Level_Up_Mock
             if (levelledUp)
                 xpMsg += $"\n🎉 Level Up! You are now Level {_user.Level}!";
 
+            // Study time counts towards a running challenge, but only if the session started
+            // after the challenge did.
+            var challenge = StudyChallenge.GetActiveChallenge(_user.UserID);
+            if (challenge != null && _startTime >= challenge.StartDate && challenge.AddMinutes(session.DurationMinutes))
+            {
+                xpMsg += $"\nChallenge: {challenge.MinutesLogged / 60.0:0.#} / {challenge.GoalMinutes / 60.0:0.#} h";
+            }
+
             // Algorithm 7.1: a ticked topic becomes a quest that unlocks in 7 days.
             if (chkTopicComplete.Checked)
             {
@@ -224,6 +258,7 @@ namespace Level_Up_Mock
             MessageBox.Show(xpMsg, "Session Saved!", MessageBoxButtons.OK, MessageBoxIcon.Information);
 
             // Return to frmHome.
+            _closeConfirmed = true;
             this.Close();
         }
 
@@ -233,6 +268,7 @@ namespace Level_Up_Mock
             if (MessageBox.Show("Discard this session? Your study time will not be saved.",
                 "Discard Session", MessageBoxButtons.YesNo, MessageBoxIcon.Question) == DialogResult.Yes)
             {
+                _closeConfirmed = true;
                 this.Close();
             }
         }

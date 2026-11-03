@@ -248,6 +248,32 @@ namespace Level_Up_Mock
             }
         }
 
+        // Saves a new name and username. The in-memory values only change after the write
+        // succeeds, so the object never disagrees with the database. The caller has already
+        // checked the username is valid and not taken.
+        public bool UpdateProfile(string name, string username)
+        {
+            try
+            {
+                var conn = DatabaseManager.Instance.GetConnection();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = "UPDATE User SET Name = @name, Username = @username WHERE UserID = @id;";
+                cmd.Parameters.AddWithValue("@name", name);
+                cmd.Parameters.AddWithValue("@username", username);
+                cmd.Parameters.AddWithValue("@id", _userID);
+                cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"User.UpdateProfile error: {ex.Message}");
+                return false;
+            }
+
+            _name = name;
+            _username = username;
+            return true;
+        }
+
         // Deletes this user profile from the database.
         // ON DELETE CASCADE in the schema removes all linked subjects, sessions, etc. automatically.
         public bool DeleteProfile()

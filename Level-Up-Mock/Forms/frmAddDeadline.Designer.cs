@@ -49,7 +49,7 @@ namespace Level_Up_Mock
 
             // ── Deadline date ─────────────────────────────────────────────────────────
             var lblDate = MakeFieldLabel("Deadline Date", 30, 162);
-            dtpDeadlineDate = new DateTimePicker
+            dtpDeadlineDate = new ThemedDatePicker
             {
                 Location = new Point(30, 186),
                 Size = new Size(260, 32),
@@ -60,7 +60,7 @@ namespace Level_Up_Mock
 
             // ── Subject (optional) ────────────────────────────────────────────────────
             var lblSubject = MakeFieldLabel("Subject  (optional)", 30, 248);
-            cmbSubject = new ComboBox
+            cmbSubject = new ThemedComboBox
             {
                 Location = new Point(30, 272),
                 Size = new Size(260, 32),
@@ -82,6 +82,17 @@ namespace Level_Up_Mock
                 lblDate, dtpDeadlineDate, lblDateError,
                 lblSubject, cmbSubject
             });
+
+            // Hover text for the controls that need explaining.
+            Ui.AddTip(this, txtDeadlineName, "What is due, for example Physics Mock or UCAS form.");
+            Ui.AddTip(this, dtpDeadlineDate, "Must be after today. The countdown runs to the start of this day.");
+            Ui.AddTip(this, cmbSubject, "Optional. Shows the deadline in that subject's colour.");
+
+            // "?" opens the guide on this screen's page.
+            Ui.AddHelpButton(this, HelpContent.DEADLINES, 426, 24);
+
+            // Themed text boxes, number boxes and tick boxes (see Ui.ThemeInputs).
+            Ui.ThemeInputs(this);
 
             this.ResumeLayout(false);
             this.PerformLayout();
