@@ -58,14 +58,29 @@ namespace Level_Up_Mock
             AddAction("Quests: unlock pending now", () => ShowCount(DevTools.UnlockPendingQuests(_user.UserID)));
             AddAction("Quests: expire active in 1 min", () => ShowCount(DevTools.ExpireActiveQuestsSoon(_user.UserID)));
             AddAction("Quests: expire active now", () => ShowCount(DevTools.ExpireActiveQuestsNow(_user.UserID)));
+
+            // Tracker testing: fill the graphs without weeks of real studying.
+            AddAction("Tracker: seed 4 weeks of sessions (no XP)", () =>
+                ShowResult($"{DevTools.SeedTestSessions(_user, Subject.LoadSubjectsForUser(_user.UserID), 4)} session(s) added."));
+            AddAction("Tracker: delete test sessions", () =>
+                ShowCount(DevTools.DeleteTestSessions(_user.UserID), "session"));
+            AddAction("Tracker: add test grades", () =>
+                ShowResult($"{DevTools.AddTestGrades(_user, Subject.LoadSubjectsForUser(_user.UserID))} grade(s) added."));
+            AddAction("Tracker: delete test grades", () =>
+                ShowCount(DevTools.DeleteTestGrades(_user.UserID), "grade"));
         }
 
         // ── Private helpers ───────────────────────────────────────────────────────────
 
         // Tells the developer how many rows a test button changed (-1 means it failed).
-        private static void ShowCount(int rows)
+        private static void ShowCount(int rows, string noun = "quest")
         {
-            string message = rows < 0 ? "The change failed. See the Output window." : $"{rows} quest(s) changed.";
+            string message = rows < 0 ? "The change failed. See the Output window." : $"{rows} {noun}(s) changed.";
+            ShowResult(message);
+        }
+
+        private static void ShowResult(string message)
+        {
             MessageBox.Show(message, "Dev Tools", MessageBoxButtons.OK, MessageBoxIcon.Information);
         }
 
