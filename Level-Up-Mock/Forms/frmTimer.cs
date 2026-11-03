@@ -209,6 +209,14 @@ namespace Level_Up_Mock
             if (levelledUp)
                 xpMsg += $"\n🎉 Level Up! You are now Level {_user.Level}!";
 
+            // Study time counts towards a running challenge, but only if the session started
+            // after the challenge did.
+            var challenge = StudyChallenge.GetActiveChallenge(_user.UserID);
+            if (challenge != null && _startTime >= challenge.StartDate && challenge.AddMinutes(session.DurationMinutes))
+            {
+                xpMsg += $"\nChallenge: {challenge.MinutesLogged / 60.0:0.#} / {challenge.GoalMinutes / 60.0:0.#} h";
+            }
+
             // Algorithm 7.1: a ticked topic becomes a quest that unlocks in 7 days.
             if (chkTopicComplete.Checked)
             {

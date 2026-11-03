@@ -12,6 +12,37 @@ namespace Level_Up_Mock
             user.AddRewards(amount);
         }
 
+        // ── Challenge helpers ─────────────────────────────────────────────────────────
+
+        // Puts the end date of the active challenge in the past, so it settles on the next load.
+        // Returns how many challenges were changed (-1 on failure).
+        public static int EndChallengeNow(int userID)
+        {
+            try
+            {
+                var conn = DatabaseManager.Instance.GetConnection();
+                using var cmd = conn.CreateCommand();
+                cmd.CommandText = @"UPDATE StudyChallenge SET EndDate = @end
+                                    WHERE UserID = @uid AND Status = 'active';";
+                cmd.Parameters.AddWithValue("@end", DateTime.Now.AddMinutes(-1).ToString("yyyy-MM-ddTHH:mm:ss"));
+                cmd.Parameters.AddWithValue("@uid", userID);
+                return cmd.ExecuteNonQuery();
+            }
+            catch (Exception ex)
+            {
+                System.Diagnostics.Debug.WriteLine($"DevTools.EndChallengeNow error: {ex.Message}");
+                return -1;
+            }
+        }
+
+        // Adds study minutes to the active challenge, as if a session had been saved.
+        // Returns false if there is no active challenge.
+        public static bool AddChallengeMinutes(int userID, int minutes)
+        {
+            var challenge = StudyChallenge.GetActiveChallenge(userID);
+            return challenge != null && challenge.AddMinutes(minutes);
+        }
+
         // ── Tracker test data ─────────────────────────────────────────────────────────
 
         // Marker put at the start of seeded notes so the seeded sessions can be found and

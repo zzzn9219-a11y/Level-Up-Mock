@@ -91,6 +91,12 @@ namespace Level_Up_Mock
         }
 #endif
 
+        // "Challenge" navigation button.
+        private void btnChallenge_Click(object? sender, EventArgs e)
+        {
+            OpenChildForm(new frmChallenge(_user!));
+        }
+
         // "Tracker" navigation button.
         private void btnTracker_Click(object? sender, EventArgs e)
         {
@@ -228,6 +234,7 @@ namespace Level_Up_Mock
             UpdateAvatar();
             LoadDeadlines();
             LoadQuests();
+            SettleChallenge();
             LoadPastPaperSubjects();
         }
 
@@ -380,6 +387,29 @@ namespace Level_Up_Mock
 
             RenderQuestPanel();
             ShowQuestCountdownText();
+        }
+
+        // If the weekly challenge ended while the app was closed, settles it now (Algorithm 10.2)
+        // and tells the user the result. The outcome can only be applied once.
+        private void SettleChallenge()
+        {
+            if (_user == null) return;
+
+            var settled = StudyChallenge.ResolveFinishedChallenge(_user);
+            if (settled == null) return;
+
+            bool success = settled.Status == StudyChallenge.STATUS_SUCCESS;
+            int payout = settled.GetPayout(success);
+
+            string message = success
+                ? $"Challenge complete! +{payout} rewards"
+                : payout > 0
+                    ? $"Challenge failed. {payout} rewards returned."
+                    : "Challenge failed. No rewards returned.";
+            MessageBox.Show(message, "Weekly Challenge", MessageBoxButtons.OK,
+                success ? MessageBoxIcon.Information : MessageBoxIcon.Warning);
+
+            lblRewards.Text = $"★ {_user.Rewards} Rewards";
         }
 
         // Writes the current countdown text into each visible quest row. It does no status
