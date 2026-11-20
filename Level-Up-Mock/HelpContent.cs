@@ -200,7 +200,7 @@ namespace Level_Up_Mock
                 Key = CHALLENGE,
                 Title = "🎯  Weekly Challenge",
                 Summary = "A challenge is a study goal for the next 7 days with some of your rewards riding on it. It gives you a short-term target to work towards.",
-                Where = "Home, then Challenge. The Challenge button on Home shows your progress.",
+                Where = "Home, then the Start a Challenge button. Once a challenge is running, that button shows your progress instead.",
                 Steps = new[]
                 {
                     "Choose how many hours you want to study in the next 7 days (1 to 80).",

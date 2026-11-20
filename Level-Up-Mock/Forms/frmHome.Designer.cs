@@ -352,7 +352,7 @@ namespace Level_Up_Mock
             // Version 3 features.
             btnTracker = MakeNavButton("📊  Tracker", 2, 0, navy);
             btnTracker.Click += btnTracker_Click;
-            btnChallenge = MakeNavButton("🎯  Challenge", 1, 1, navy);
+            btnChallenge = MakeNavButton("🎯  Start a Challenge", 1, 1, navy);
             btnChallenge.Click += btnChallenge_Click;
             btnSettings = MakeNavButton("⚙  Settings", 2, 1, navy);
             btnSettings.Click += btnSettings_Click;
@@ -365,7 +365,7 @@ namespace Level_Up_Mock
             Ui.AddTip(this, btnTracker, "Graphs of your study hours and grades, plus your session history.");
             Ui.AddTip(this, btnLeaderboard, "See how your total study time ranks against other profiles on this computer.");
             Ui.AddTip(this, btnDeadlines, "Add and manage countdowns to your exams, mocks and hand-ins.");
-            Ui.AddTip(this, btnChallenge, "Set a study goal for the week and stake rewards on it.");
+            Ui.AddTip(this, btnChallenge, "Start here to set a weekly study goal and stake rewards on it. You win double back if you reach it.");
             Ui.AddTip(this, btnSettings, "Change your name, username, subject colours or avatar.");
             Ui.AddTip(this, btnQuests, "Quests remind you to revisit a topic a week after you finished it.");
             Ui.AddTip(this, lblLevel, "Your level goes up as you earn XP. The bar shows how close the next level is.");

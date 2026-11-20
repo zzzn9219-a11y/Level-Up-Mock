@@ -289,7 +289,7 @@ namespace Level_Up_Mock
             var challenge = StudyChallenge.GetActiveChallenge(_user.UserID);
             btnChallenge.Text = challenge != null
                 ? $"🎯  Challenge {challenge.ProgressPercentage:0}%"
-                : "🎯  Challenge";
+                : "🎯  Start a Challenge";
         }
 
         // Draws the user's avatar from the items they have equipped in the store.

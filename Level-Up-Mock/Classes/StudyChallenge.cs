@@ -157,8 +157,8 @@ namespace Level_Up_Mock
 
         // ── Progress ──────────────────────────────────────────────────────────────────
 
-        // Adds minutes from a saved session. Only counts while the challenge is active and
-        // has not ended. Returns false if the minutes were not added.
+        // Algorithm 10.3: adds minutes from a saved session. Only counts while the challenge is
+        // active and has not ended. Returns false if the minutes were not added.
         public bool AddMinutes(int minutes)
         {
             if (_status != STATUS_ACTIVE || DateTime.Now >= _endDate) return false;
