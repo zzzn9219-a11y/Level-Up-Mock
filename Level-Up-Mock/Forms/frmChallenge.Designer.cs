@@ -97,13 +97,14 @@ namespace Level_Up_Mock
         {
             pnlSetup = new Panel { Location = new Point(30, 100), Size = new Size(640, 390), BackColor = Color.Transparent };
 
-            var lblIntro = MakeText("Set a study goal for the next 7 days and stake some rewards on it.", 0, 0, 640, 10.5f, Theme.TextMuted);
+            var lblIntro = MakeText("To start a challenge: 1) choose your weekly goal, 2) choose how many rewards to stake, then 3) press Start Challenge. Reach the goal within 7 days to win double your stake back.", 0, 0, 640, 10.5f, Theme.TextMuted);
+            lblIntro.Height = 40;   // two lines of text
 
-            var lblGoal = MakeText("Weekly goal (hours)", 0, 44, 200, 10f, Color.White, true);
+            var lblGoal = MakeText("1) Weekly goal (hours)", 0, 44, 200, 10f, Color.White, true);
             nudGoalHours = MakeNumeric(0, 70, StudyChallenge.MIN_GOAL_HOURS, StudyChallenge.MAX_GOAL_HOURS, 10);
             nudGoalHours.ValueChanged += (s, e) => UpdateOutcomeText();
 
-            var lblStake = MakeText("Stake (rewards)", 240, 44, 200, 10f, Color.White, true);
+            var lblStake = MakeText("2) Stake (rewards)", 240, 44, 200, 10f, Color.White, true);
             nudStake = MakeNumeric(240, 70, StudyChallenge.MIN_STAKE, 1, 1);
             nudStake.ValueChanged += (s, e) => UpdateOutcomeText();
 
@@ -129,7 +130,7 @@ namespace Level_Up_Mock
 
             btnStartChallenge = new RoundedButton
             {
-                Text = "Start Challenge",
+                Text = "3) Start Challenge",
                 Font = new Font("Segoe UI", 11f, FontStyle.Bold),
                 ForeColor = Color.White,
                 Size = new Size(200, 44),
